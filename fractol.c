@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 12:38:19 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 13:55:21 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,11 @@ int	mandel(double x, double y)
 	return (depth);
 }
 
-void	testfunc(t_vars *vars, int x, int y, double xtrans, double ytrans, int i)
+void	testfunc(t_vars *vars, int x, int y, int i)
 {
-	int depth = mandel(xtrans, ytrans);
-
-	if (depth < DEPTH_MAX)
+	if (vars->mand_depths[x][y] < DEPTH_MAX)
 	{
-		double tmp = (((double)depth) / (128)) * 2 * M_PI + i / 5.0;
+		double tmp = (((double)vars->mand_depths[x][y]) / (128)) * 2 * M_PI + i / 5.0;
 		put_pixel(&vars->img, x, y, new_color(0, (sin(tmp) + 1) * 255/2, (sin(tmp + 2) + 1) * 255/2, (sin(tmp + 4) + 1) * 255/2, vars->img.endian));
 	}
 	else
@@ -88,10 +86,12 @@ int	mouse_hook(int button, int x, int y, t_vars *vars)
 		vars->ymax = mouse_y + y_dist;
 		vars->x_len = (vars->xmax - vars->xmin);
 		vars->y_len = (vars->ymax - vars->ymin);
+		vars->recalc = 1;
 	}
 	return (0);
 }
 
+#include <stdlib.h>
 int	main(void)
 {
 	t_vars	vars;
@@ -115,19 +115,9 @@ int	main(void)
 	vars.ymax = 2;
 	vars.x_len = (vars.xmax - vars.xmin);
 	vars.y_len = (vars.ymax - vars.ymin);
-	//- 0.37465401 < x < - 0,37332411 und +0.659227668 < y < +0,66020767
-	//vars.xmin = -0.37465401;
-	//vars.xmax = -0.37332411;
-	//vars.ymin = +0.659227668;
-	//vars.ymax = +0.66020767;
-	//vars.x_len = (vars.xmax - vars.xmin);
-	//vars.y_len = (vars.ymax - vars.ymin);
-	struct s_for_each_pixel_params tmp;
-	tmp.vars = &vars;
-	tmp.func = testfunc;
+	vars.recalc = 1;
 	
-	mlx_loop_hook (vars.mlx, for_each_pixel, &tmp);
-	//for_each_pixel(&tmp);
+	mlx_loop_hook (vars.mlx, for_each_pixel, &vars);
 	mlx_hook(vars.win, 2, 1L<<0, key_press, &vars);
 	mlx_hook(vars.win, 17, 0, quit, &vars);
 	mlx_mouse_hook (vars.win, mouse_hook, &vars);

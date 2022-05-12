@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 12:15:31 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 14:03:04 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 # define HEIGHT 800
 # define WIDTH 800
-# define DEPTH_MAX 500
+# define DEPTH_MAX 5000
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 /*
@@ -61,13 +61,13 @@ typedef struct	s_vars {
 	double	xmax;
 	double	ymin;
 	double	ymax;
+	int		recalc;
+	int		mand_depths[WIDTH][HEIGHT];
 }				t_vars;
 
-
-struct s_for_each_pixel_params{
-	t_vars	*vars;
-	void	(*func)(t_vars *vars, int x, int y, double xtrans, double ytrans, int i);
-};
+/* FRACTOL.C */
+int		mandel(double x, double y);
+void	testfunc(t_vars *vars, int x, int y, int i);
 
 /* FRACTOL_COLOR_UTILS.C */
 t_color	new_color(unsigned char t, unsigned char r, unsigned char g, unsigned char b, int endian);
@@ -76,6 +76,6 @@ t_color hsv2rgb(t_color HSV, int endian);
 
 /* FRACTOL_PIXEL_UTILS.C */
 int		coord_to_offset(int x, int y, int line_length, int bits_per_pixel);
-int		for_each_pixel(struct s_for_each_pixel_params *input);
+int		for_each_pixel(t_vars *vars);
 
 #endif
