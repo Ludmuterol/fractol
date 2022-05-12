@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 17:34:30 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 21:38:25 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	for_each_pixel(t_vars *vars)
 		{
 			if (vars->mand_depths[x][y] == -1)
 				vars->mand_depths[x][y] = mandel(xtrans, ytrans);
-			testfunc(vars, x, y, i);
+			put_mand_pixels(vars, x, y, i);
 			ytrans -= ystep;
 			y++;
 		}

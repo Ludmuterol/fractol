@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 17:13:56 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 22:08:17 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,6 @@ typedef struct	s_vars {
 	int		mand_depths[WIDTH][HEIGHT];
 }				t_vars;
 
-/* FRACTOL.C */
-int		mandel(double x, double y);
-void	testfunc(t_vars *vars, int x, int y, int i);
-
 /* FRACTOL_COLOR_UTILS.C */
 t_color	new_color(unsigned char t, unsigned char r, unsigned char g, unsigned char b, int endian);
 void	put_pixel(t_data *img, int x, int y, t_color color);
@@ -77,5 +73,11 @@ t_color hsv2rgb(t_color HSV, int endian);
 /* FRACTOL_PIXEL_UTILS.C */
 int		coord_to_offset(int x, int y, int line_length, int bits_per_pixel);
 int		for_each_pixel(t_vars *vars);
+
+/* FRACTOL_MANDELBROT.C */
+int		mandel(double x, double y);
+void	put_mand_pixels(t_vars *vars, int x, int y, int i);
+void	move_array(t_vars *vars, int hor, int ver);
+void	init_depth_array(int in[WIDTH][HEIGHT]);
 
 #endif

@@ -6,45 +6,14 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 17:14:14 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 22:27:36 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-int	mandel(double x, double y)
-{
-	double	xn = 0, yn = 0;
-	int		depth = 0;
-	if (x * x + 2 * x + 1 + y * y < 0.0625)
-		return (DEPTH_MAX);
-	double q = (x - 0.25) * (x - 0.25) + y * y;
-	if (q * (q + (x - 0.25)) < y * y * 0.25)
-		return (DEPTH_MAX);
-	while (depth <= DEPTH_MAX)
-	{
-		double xx = xn * xn;
-		double yy = yn * yn;
-		double tmp = xx - yy + x; 
-		yn = 2 * xn * yn + y;
-		xn = tmp;
-		depth++;
-		if (xx + yy > 4)
-			return (depth);
-	}
-	return (depth);
-}
 
-void	testfunc(t_vars *vars, int x, int y, int i)
-{
-	if (vars->mand_depths[x][y] < DEPTH_MAX)
-	{
-		double tmp = (((double)vars->mand_depths[x][y]) / (128)) * 2 * M_PI + i / 5.0;
-		put_pixel(&vars->img, x, y, new_color(0, (sin(tmp) + 1) * 255/2, (sin(tmp + 2) + 1) * 255/2, (sin(tmp + 4) + 1) * 255/2, vars->img.endian));
-	}
-	else
-		put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
-}
+
 
 int	quit(t_vars *vars)
 {
@@ -52,90 +21,40 @@ int	quit(t_vars *vars)
 	return (0);
 }
 
-void	init_depth_array(int in[WIDTH][HEIGHT])
-{
-	int c, d;
-	
-	c = 0;
-	while (c < WIDTH)
-	{
-		d = 0;
-		while (d < HEIGHT)
-		{
-			in[c][d] = -1;
-			d++;
-		}
-		c++;
-	}
-}
-
-void	move_array(t_vars *vars, int hor, int ver)
-{
-	int	tmp[WIDTH][HEIGHT];
-	int c, d;
-	
-	init_depth_array(tmp);
-	c = 0;
-	while (c < WIDTH)
-	{
-		d = 0;
-		while (d < HEIGHT)
-		{
-			
-			if (hor && c + hor >= 0 && c + hor < WIDTH)
-				tmp[c + hor][d] = vars->mand_depths[c][d];
-			if (ver && d + ver >= 0 && d + ver < HEIGHT)
-				tmp[c][d + ver] = vars->mand_depths[c][d];
-			d++;
-		}
-		c++;
-	}
-	c = 0;
-	while (c < WIDTH)
-	{
-		d = 0;
-		while (d < HEIGHT)
-		{
-			vars->mand_depths[c][d] = tmp[c][d];
-			d++;
-		}
-		c++;
-	}
-}
-
+#include <stdio.h>
 int	key_press(int keycode, t_vars *vars)
 {
 	if (keycode == XK_Escape)
 		mlx_loop_end(vars->mlx);
 	if (keycode == XK_Right || keycode == XK_Left || keycode == XK_Up || keycode == XK_Down)
+	{
+		if (keycode == XK_Right)
 		{
-			if (keycode == XK_Right)
-			{
-				vars->xmin += (vars->x_len / WIDTH) * MOVE;
-				vars->xmax += (vars->x_len / WIDTH) * MOVE;
-				move_array(vars,- MOVE, 0);
-			}
-			if (keycode == XK_Left)
-			{
-				vars->xmin -= (vars->x_len / WIDTH) * MOVE;
-				vars->xmax -= (vars->x_len / WIDTH) * MOVE;
-				move_array(vars, MOVE, 0);
-			}
-			if (keycode == XK_Up)
-			{
-				vars->ymin += (vars->y_len / HEIGHT) * MOVE;
-				vars->ymax += (vars->y_len / HEIGHT) * MOVE;
-				move_array(vars, 0, MOVE);
-			}
-			if (keycode == XK_Down)
-			{
-				vars->ymin -= (vars->y_len / HEIGHT) * MOVE;
-				vars->ymax -= (vars->y_len / HEIGHT) * MOVE;
-				move_array(vars, 0, - MOVE);
-			}
-			vars->x_len = (vars->xmax - vars->xmin);
-			vars->y_len = (vars->ymax - vars->ymin);
+			vars->xmin += (vars->x_len / WIDTH) * MOVE;
+			vars->xmax += (vars->x_len / WIDTH) * MOVE;
+			move_array(vars,- MOVE, 0);
 		}
+		if (keycode == XK_Left)
+		{
+			vars->xmin -= (vars->x_len / WIDTH) * MOVE;
+			vars->xmax -= (vars->x_len / WIDTH) * MOVE;
+			move_array(vars, MOVE, 0);
+		}
+		if (keycode == XK_Up)
+		{
+			vars->ymin += (vars->y_len / HEIGHT) * MOVE;
+			vars->ymax += (vars->y_len / HEIGHT) * MOVE;
+			move_array(vars, 0, MOVE);
+		}
+		if (keycode == XK_Down)
+		{
+			vars->ymin -= (vars->y_len / HEIGHT) * MOVE;
+			vars->ymax -= (vars->y_len / HEIGHT) * MOVE;
+			move_array(vars, 0, - MOVE);
+		}
+		vars->x_len = (vars->xmax - vars->xmin);
+		vars->y_len = (vars->ymax - vars->ymin);
+	}
 	return (0);
 }
 
@@ -181,7 +100,6 @@ int	mouse_hook(int button, int x, int y, t_vars *vars)
 	return (0);
 }
 
-#include <stdlib.h>
 int	main(void)
 {
 	t_vars	vars;
@@ -207,6 +125,12 @@ int	main(void)
 	vars.ymax = 0 - (HEIGHT / 320);
 	vars.x_len = (vars.xmax - vars.xmin);
 	vars.y_len = (vars.ymax - vars.ymin);
+	//vars.xmin = -0.75458984375000037747582837255322374403476715087891;
+	//vars.ymin = -0.06177734374999996336264018736983416602015495300293;
+	//vars.xmax = -0.74677734375000037747582837255322374403476715087891;
+	//vars.ymax = -0.06958984374999996336264018736983416602015495300293;
+	//vars.x_len = (vars.xmax - vars.xmin);
+	//vars.y_len = (vars.ymax - vars.ymin);
 	
 	mlx_loop_hook (vars.mlx, for_each_pixel, &vars);
 	mlx_hook(vars.win, 2, 1L<<0, key_press, &vars);
