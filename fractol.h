@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 03:59:36 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 12:15:31 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 # define HEIGHT 800
 # define WIDTH 800
-# define DEPTH_MAX 50
+# define DEPTH_MAX 500
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 /*
@@ -55,6 +55,8 @@ typedef struct	s_vars {
 	void	*mlx;
 	void	*win;
 	t_data	img;
+	double	x_len;
+	double	y_len;
 	double	xmin;
 	double	xmax;
 	double	ymin;
@@ -64,7 +66,7 @@ typedef struct	s_vars {
 
 struct s_for_each_pixel_params{
 	t_vars	*vars;
-	void	(*func)(t_vars *vars, int x, int y, int i);
+	void	(*func)(t_vars *vars, int x, int y, double xtrans, double ytrans, int i);
 };
 
 /* FRACTOL_COLOR_UTILS.C */

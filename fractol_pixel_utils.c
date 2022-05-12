@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 02:32:58 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 13:36:19 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,24 @@ int	for_each_pixel(struct s_for_each_pixel_params *input)
 	static int i;
 	i++;
 	
+	double xtrans = input->vars->xmin;
+	double ytrans = input->vars->ymax;
+	double xstep = input->vars->x_len / WIDTH;
+	double ystep = input->vars->y_len / HEIGHT;
 	x = 0;
 	while (x < WIDTH)
 	{
 		y = 0;
+		ytrans = input->vars->ymax;
 		while (y < HEIGHT)
 		{
-			(input->func)(input->vars, x, y, i);
+			(input->func)(input->vars, x, y, xtrans, ytrans, i);
+			ytrans -= ystep;
 			y++;
 		}
+		xtrans += xstep;
 		x++;
 	}
+
 	return (mlx_put_image_to_window(input->vars->mlx, input->vars->win, input->vars->img.img, 0, 0));
 }
