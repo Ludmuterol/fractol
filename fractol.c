@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 13:55:21 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 17:14:14 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,90 @@ int	quit(t_vars *vars)
 	return (0);
 }
 
+void	init_depth_array(int in[WIDTH][HEIGHT])
+{
+	int c, d;
+	
+	c = 0;
+	while (c < WIDTH)
+	{
+		d = 0;
+		while (d < HEIGHT)
+		{
+			in[c][d] = -1;
+			d++;
+		}
+		c++;
+	}
+}
+
+void	move_array(t_vars *vars, int hor, int ver)
+{
+	int	tmp[WIDTH][HEIGHT];
+	int c, d;
+	
+	init_depth_array(tmp);
+	c = 0;
+	while (c < WIDTH)
+	{
+		d = 0;
+		while (d < HEIGHT)
+		{
+			
+			if (hor && c + hor >= 0 && c + hor < WIDTH)
+				tmp[c + hor][d] = vars->mand_depths[c][d];
+			if (ver && d + ver >= 0 && d + ver < HEIGHT)
+				tmp[c][d + ver] = vars->mand_depths[c][d];
+			d++;
+		}
+		c++;
+	}
+	c = 0;
+	while (c < WIDTH)
+	{
+		d = 0;
+		while (d < HEIGHT)
+		{
+			vars->mand_depths[c][d] = tmp[c][d];
+			d++;
+		}
+		c++;
+	}
+}
+
 int	key_press(int keycode, t_vars *vars)
 {
 	if (keycode == XK_Escape)
 		mlx_loop_end(vars->mlx);
+	if (keycode == XK_Right || keycode == XK_Left || keycode == XK_Up || keycode == XK_Down)
+		{
+			if (keycode == XK_Right)
+			{
+				vars->xmin += (vars->x_len / WIDTH) * MOVE;
+				vars->xmax += (vars->x_len / WIDTH) * MOVE;
+				move_array(vars,- MOVE, 0);
+			}
+			if (keycode == XK_Left)
+			{
+				vars->xmin -= (vars->x_len / WIDTH) * MOVE;
+				vars->xmax -= (vars->x_len / WIDTH) * MOVE;
+				move_array(vars, MOVE, 0);
+			}
+			if (keycode == XK_Up)
+			{
+				vars->ymin += (vars->y_len / HEIGHT) * MOVE;
+				vars->ymax += (vars->y_len / HEIGHT) * MOVE;
+				move_array(vars, 0, MOVE);
+			}
+			if (keycode == XK_Down)
+			{
+				vars->ymin -= (vars->y_len / HEIGHT) * MOVE;
+				vars->ymax -= (vars->y_len / HEIGHT) * MOVE;
+				move_array(vars, 0, - MOVE);
+			}
+			vars->x_len = (vars->xmax - vars->xmin);
+			vars->y_len = (vars->ymax - vars->ymin);
+		}
 	return (0);
 }
 
@@ -86,7 +166,17 @@ int	mouse_hook(int button, int x, int y, t_vars *vars)
 		vars->ymax = mouse_y + y_dist;
 		vars->x_len = (vars->xmax - vars->xmin);
 		vars->y_len = (vars->ymax - vars->ymin);
-		vars->recalc = 1;
+		int c = 0, d = 0;
+		while (c < WIDTH)
+		{
+			d = 0;
+			while (d < HEIGHT)
+			{
+				vars->mand_depths[c][d] = -1;
+				d++;
+			}
+			c++;
+		}
 	}
 	return (0);
 }
@@ -108,14 +198,15 @@ int	main(void)
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.line_length, &vars.img.endian);
 	if (!vars.img.addr)
 		return (0);
-	//-3 < x < 2 und -2 < y < 2
-	vars.xmin = -3;
-	vars.xmax = 1;
-	vars.ymin = -2;
-	vars.ymax = 2;
+	
+	init_depth_array(vars.mand_depths);
+
+	vars.xmin = -1 - (WIDTH / 320);
+	vars.xmax = -1 + (WIDTH / 320);
+	vars.ymin = 0 + (HEIGHT / 320);
+	vars.ymax = 0 - (HEIGHT / 320);
 	vars.x_len = (vars.xmax - vars.xmin);
 	vars.y_len = (vars.ymax - vars.ymin);
-	vars.recalc = 1;
 	
 	mlx_loop_hook (vars.mlx, for_each_pixel, &vars);
 	mlx_hook(vars.win, 2, 1L<<0, key_press, &vars);

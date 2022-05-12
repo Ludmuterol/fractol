@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 14:03:04 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 17:13:56 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define DEPTH_MAX 5000
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
+# define MOVE 10	//PIXEL - nach links; + nach rechts
 /*
 WIN mouse keys
 */
@@ -61,7 +62,6 @@ typedef struct	s_vars {
 	double	xmax;
 	double	ymin;
 	double	ymax;
-	int		recalc;
 	int		mand_depths[WIDTH][HEIGHT];
 }				t_vars;
 

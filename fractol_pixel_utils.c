@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 13:54:00 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/12 17:34:30 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	for_each_pixel(t_vars *vars)
 		ytrans = vars->ymax;
 		while (y < HEIGHT)
 		{
-			if (vars->recalc)
+			if (vars->mand_depths[x][y] == -1)
 				vars->mand_depths[x][y] = mandel(xtrans, ytrans);
 			testfunc(vars, x, y, i);
 			ytrans -= ystep;
@@ -45,6 +45,5 @@ int	for_each_pixel(t_vars *vars)
 		xtrans += xstep;
 		x++;
 	}
-	vars->recalc = 0;
 	return (mlx_put_image_to_window(vars->mlx, vars->win, vars->img.img, 0, 0));
 }
