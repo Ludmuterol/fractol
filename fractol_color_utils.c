@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 19:57:41 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/12 01:32:04 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/13 03:25:37 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,5 @@ void	put_pixel(t_data *img, int x, int y, t_color color)
 	char	*dst;
 
 	dst = img->addr + coord_to_offset(x, y, img->line_length, img->bits_per_pixel);
-	*(unsigned int*)dst = color.color;
+	*(unsigned int *)dst = color.color;
 }
-
-
