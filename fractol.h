@@ -6,15 +6,43 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/14 02:08:42 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/14 17:32:23 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TEST_H
 # define TEST_H
+
+# ifdef _WIN32
+# endif
+# ifdef __APPLE__
+# include "mlx/mlx.h"
+# define XK_Escape                        53
+# define XK_Left                          123
+# define XK_Up                            126
+# define XK_Right                         124
+# define XK_Down                          125
+# define XK_p                             35
+# define LCLICK 1
+# define MCLICK 3
+# define RCLICK 2
+# define SCRL_UP 4
+# define SCRL_DWN 5
+# endif
+# ifdef unix
 # include "mlx_linux/mlx.h"
-# include <math.h>
 # include <X11/keysym.h>
+# define LCLICK 1
+# define MCLICK 2
+# define RCLICK 3
+# define SCRL_UP 4
+# define SCRL_DWN 5
+# endif
+
+# include <math.h>
+# include <stdlib.h>
+
+
 
 # define HEIGHT 800
 # define WIDTH 800
@@ -22,15 +50,6 @@
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 # define MOVE 10	//PIXEL - nach links; + nach rechts
-
-/*
-WIN mouse keys
-*/
-# define LCLICK 1
-# define MCLICK 2
-# define RCLICK 3
-# define SCRL_UP 4
-# define SCRL_DWN 5
 
 typedef struct s_data {
 	void	*img;

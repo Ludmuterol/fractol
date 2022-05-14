@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/14 02:24:59 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/14 17:15:48 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	quit(t_vars *vars)
 {
-	mlx_loop_end(vars->mlx);
+	exit(0);
 	return (0);
 }
 
@@ -38,7 +38,7 @@ int	key_press(int kc, t_vars *vars)
 	double	tmp;
 
 	if (kc == XK_Escape)
-		mlx_loop_end(vars->mlx);
+		exit(0);
 	if (kc >= XK_Left && kc <= XK_Down)
 	{
 		if (kc == XK_Right || kc == XK_Left)
@@ -148,8 +148,5 @@ int	main(void)
 	mlx_hook(vars.win, 17, 0, quit, &vars);
 	mlx_mouse_hook(vars.win, mouse_hook, &vars);
 	mlx_loop(vars.mlx);
-	mlx_destroy_image(vars.mlx, vars.img.img);
-	mlx_destroy_window(vars.mlx, vars.win);
-	mlx_destroy_display(vars.mlx);
 	return (0);
 }
