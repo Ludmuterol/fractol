@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/13 03:06:38 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/14 02:08:42 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@
 
 # define HEIGHT 800
 # define WIDTH 800
-# define DEPTH_MAX 5000
+# define DEPTH_MAX 255
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 # define MOVE 10	//PIXEL - nach links; + nach rechts
+
 /*
 WIN mouse keys
 */
@@ -62,8 +63,17 @@ typedef struct	s_vars {
 	double	xmax;
 	double	ymin;
 	double	ymax;
-	int		mand_depths[WIDTH][HEIGHT];
+	double	xn;
+	double	yn;
+	int		depths[WIDTH][HEIGHT];
+	int		get_mouse_move;
 }				t_vars;
+
+struct s_for_each_pixel
+{
+	t_vars	*vars;
+	int (*f)(double x, double y, double xn, double yn);
+};
 
 /* FRACTOL_COLOR_UTILS.C */
 t_color	new_color(unsigned char t, unsigned char r, unsigned char g, unsigned char b, int endian);
@@ -72,11 +82,16 @@ t_color hsv2rgb(t_color HSV, int endian);
 
 /* FRACTOL_PIXEL_UTILS.C */
 int		coord_to_offset(int x, int y, int line_length, int bits_per_pixel);
-int		for_each_pixel(t_vars *vars);
+int		for_each_pixel(struct s_for_each_pixel *stuff);
+void	put_pixels(t_vars *vars, int x, int y, int i);
 
 /* FRACTOL_MANDELBROT.C */
-int		mandel(double x, double y);
-void	put_mand_pixels(t_vars *vars, int x, int y, int i);
+int		mandel(double x, double y, double xn, double yn);
+
+/* FRACTOL_JULIA.c */
+int		julia(double xn, double yn, double x, double y);
+
+/* FRACTOL_DEPTH_ARRAY.C */
 void	move_array(t_vars *vars, int hor, int ver);
 void	init_depth_array(int in[WIDTH][HEIGHT]);
 

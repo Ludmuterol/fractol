@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/13 03:08:19 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/14 02:24:59 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ int	key_press(int kc, t_vars *vars)
 		}
 		calc_len(vars);
 	}
+	if (kc == XK_p)
+	{
+		if (vars->get_mouse_move)
+			vars->get_mouse_move = 0;
+		else
+			vars->get_mouse_move = 1;
+	}
 	return (0);
 }
 
@@ -82,7 +89,7 @@ int	mouse_hook(int button, int x, int y, t_vars *vars)
 		mouse_x = vars->xmin + (((double)x / WIDTH) * vars->x_len);
 		mouse_y = vars->ymax - (((double)y / HEIGHT) * vars->y_len);
 		set_bounds(vars, mouse_x - x_dist, mouse_x + x_dist, mouse_y - y_dist, mouse_y + y_dist);
-		init_depth_array(vars->mand_depths);
+		init_depth_array(vars->depths);
 	}
 	return (0);
 }
@@ -104,19 +111,39 @@ int	init(t_vars *vars)
 		mlx_destroy_window(vars->mlx, vars->win);
 		return (mlx_destroy_image(vars->mlx, vars->img.img));
 	}
-	init_depth_array(vars->mand_depths);
+	init_depth_array(vars->depths);
 	return (1);
+}
+
+int	mouse_move(int x, int y, t_vars *vars)
+{
+	if (vars->get_mouse_move)
+	{
+		vars->xn = vars->xmin + (((double)x / WIDTH) * vars->x_len);
+		vars->yn = vars->ymax - (((double)y / HEIGHT) * vars->y_len);
+		init_depth_array(vars->depths);
+	}
+	return (0);
 }
 
 //set_bounds(&vars, -0.7545898, -0.7467773, -0.0617773, -0.0695898);
 int	main(void)
 {
-	t_vars	vars;
+	t_vars					vars;
+	struct s_for_each_pixel	stuff;
 
 	if (!init(&vars))
 		return (0);
-	set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
-	mlx_loop_hook(vars.mlx, for_each_pixel, &vars);
+	//set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
+	set_bounds(&vars, -2, 2, -2, 2);
+	stuff.f = julia;
+	stuff.vars = &vars;
+	vars.xn = 0.1627;
+	vars.yn = 0.5717;
+	vars.get_mouse_move = 0;
+	mlx_hook(vars.win, 6, 1L << 6, mouse_move, &vars);
+
+	mlx_loop_hook(vars.mlx, for_each_pixel, &stuff);
 	mlx_hook(vars.win, 2, 1L << 0, key_press, &vars);
 	mlx_hook(vars.win, 17, 0, quit, &vars);
 	mlx_mouse_hook(vars.win, mouse_hook, &vars);
