@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/05/14 16:55:10 by tpeters          ###   ########.fr        #
+#    Updated: 2022/05/15 02:41:05 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,8 @@ exec: $(NAME)
 	./$(NAME)
 
 debug :
-	$(CC) $(CFLAGS) -g -I/usr/include -c $(SRCS)
-	gcc $(OBJS) -g $(CFLAGS) -I/usr/include -o $(NAME)
+	$(CC) $(CFLAGS) -g -c $(SRCS)
+	$(CC) $(OBJS) -g $(LINK_FLAGS) -o $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LINK_FLAGS) -o $(NAME)

@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/14 17:32:23 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 03:28:29 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@
 
 # include <math.h>
 # include <stdlib.h>
-
-
 
 # define HEIGHT 800
 # define WIDTH 800

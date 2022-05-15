@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/12 21:34:17 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/14 00:50:34 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 03:35:06 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ int	mandel(double x, double y, double xn, double yn)
 	int		depth;
 	double	tmp;
 
-	if (check_trivial(x, y))
-		return (DEPTH_MAX);
+	//if (check_trivial(x, y))
+	//	return (DEPTH_MAX);
 	depth = 0;
-	while ((xn * xn + yn * yn <= 4) && depth <= DEPTH_MAX)
+	while ((xn * xn + yn * yn <= 4) && depth < DEPTH_MAX)
 	{
 		tmp = xn * xn - yn * yn + x;
 		yn = 2 * xn * yn + y;
