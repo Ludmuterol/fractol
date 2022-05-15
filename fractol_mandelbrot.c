@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/12 21:34:17 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 03:49:33 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 15:16:59 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,15 @@ static int	check_trivial(double x, double y)
 
 //https://theses.liacs.nl/pdf/2018-2019-JonckheereLSde.pdf
 //http://www.nongnu.org/hpalib/
-int	mandel(double x, double y, double xn, double yn)
+int	mandel(int depth_max, double x, double y, double xn, double yn)
 {
 	int		depth;
 	double	tmp;
 
 	if (check_trivial(x, y))
-		return (DEPTH_MAX);
+		return (depth_max);
 	depth = 0;
-	while ((xn * xn + yn * yn <= 4) && depth < DEPTH_MAX)
+	while ((xn * xn + yn * yn <= 4) && depth < depth_max)
 	{
 		tmp = xn * xn - yn * yn + x;
 		yn = 2 * xn * yn + y;

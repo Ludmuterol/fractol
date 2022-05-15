@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 04:00:02 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 15:49:56 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,25 @@ int	coord_to_offset(int x, int y, int line_length, int bits_per_pixel)
 	return (y * line_length + x * (bits_per_pixel / 8));
 }
 
+t_color	depth_to_col(t_vars *vars, double dep, int i)
+{
+	double tmp = (dep / vars->max_depth) * 2 * M_PI ;
+	return (new_color(0, (sin(tmp) + 1) * 255 / 2, (sin(tmp + 2) + 1) * 255 / 2, (sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
+}
+
 void	put_pixels(t_vars *vars, int x, int y, int i)
 {
 	double	tmp;
 
-	if (vars->depths[x][y] < DEPTH_MAX)
+	if (vars->depths[x][y] < vars->max_depth)
 	{
 		if (vars->depths[x][y] >= 0)
 		{
-			tmp = (((double)vars->depths[x][y]) / (128)) * 2 * M_PI + i / 5.0;
-			put_pixel(&vars->img, x, y, new_color(0, (sin(tmp) + 1) * 255 / 2, (sin(tmp + 2) + 1) * 255 / 2, (sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
+			put_pixel(&vars->img, x, y, depth_to_col(vars, (double)vars->depths[x][y], i));
 		}
 		else
 		{
-			put_pixel(&vars->img, x, y, new_color(0, 255, 0, 0, vars->img.endian));
+			put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
 		}
 	}
 	else
@@ -56,8 +61,8 @@ int	O_for_each_pixel(struct s_for_each_pixel *stuff)
 		ytrans = stuff->vars->ymax;
 		while (y < HEIGHT)
 		{
-			if (stuff->vars->depths[x][y] == -1)
-				stuff->vars->depths[x][y] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
+			if (stuff->vars->depths[x][y] < 0)
+				stuff->vars->depths[x][y] = stuff->f(stuff->vars->max_depth, xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 			put_pixels(stuff->vars, x, y, i);
 			ytrans -= ystep;
 			y++;
@@ -79,7 +84,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)tmp / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)y1 / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[tmp][y1] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
+			stuff->vars->depths[tmp][y1] = stuff->f(stuff->vars->max_depth, xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[tmp][y1])
 		{
@@ -92,7 +97,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)tmp / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)y2 / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[tmp][y2] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
+			stuff->vars->depths[tmp][y2] = stuff->f(stuff->vars->max_depth, xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[tmp][y2])
 		{
@@ -110,7 +115,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)x1 / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)tmp / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[x1][tmp] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
+			stuff->vars->depths[x1][tmp] = stuff->f(stuff->vars->max_depth, xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[x1][tmp])
 		{
@@ -123,7 +128,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)x2 / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)tmp / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[x2][tmp] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
+			stuff->vars->depths[x2][tmp] = stuff->f(stuff->vars->max_depth, xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[x2][tmp])
 		{
@@ -134,7 +139,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		}
 		tmp++;
 	}
-	if (check == DEPTH_MAX)
+	if (check == stuff->vars->max_depth)
 		return (ret);
 	return (0);
 }
@@ -151,7 +156,7 @@ void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int 
 		{
 			if (stuff->vars->depths[x][y] == -1)
 			{
-				stuff->vars->depths[x][y] = -2;
+				stuff->vars->depths[x][y] = stuff->vars->max_depth;
 			}
 			y++;
 		}
@@ -165,7 +170,7 @@ void	rec_box(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
 		fill_rec_black(stuff, x1, y1, x2, y2);
 	else
 	{
-		if (x2 - x1 < 6 || y2 - y1 < 6)
+		if (x2 - x1 < 5 || y2 - y1 < 5)
 			return ;
 		rec_box(stuff, x1, y1, x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2);
 		rec_box(stuff, x1 + (x2 - x1) / 2, y1, x2, y1 + (y2 - y1) / 2);
@@ -174,8 +179,20 @@ void	rec_box(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
 	}
 }
 
+#include <time.h>
+#include <stdio.h>
 int	for_each_pixel(struct s_for_each_pixel *stuff)
 {
+	
+	clock_t start = clock(), diff;
+	
 	rec_box(stuff, 0, 0, WIDTH - 1, HEIGHT - 1);
-	return (O_for_each_pixel(stuff));
+	O_for_each_pixel(stuff);
+	
+	diff = clock() - start;
+	int msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
+	printf("max_depth %d\n", stuff->vars->max_depth);
+	//init_depth_array(stuff->vars->depths);
+	return (0);
 }

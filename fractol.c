@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 03:50:33 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 16:09:24 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,44 @@ void	set_bounds(t_vars *vars, double a, double b, double c, double d)
 	vars->ymin = c;
 	vars->ymax = d;
 	calc_len(vars);
+}
+
+void	inc_max_dep(t_vars *vars)
+{
+	int	c;
+	int	d;
+
+	c = 0;
+	while (c < WIDTH)
+	{
+		d = 0;
+		while (d < HEIGHT)
+		{
+			if (vars->depths[c][d] == vars->max_depth)
+				vars->depths[c][d] = -1;
+			d++;
+		}
+		c++;
+	}
+	if (vars->max_depth < 10)
+		vars->max_depth += 1;
+	else if (vars->max_depth < 50)
+		vars->max_depth += 5;
+	else
+		vars->max_depth += 10;
+}
+
+void	dec_max_dep(t_vars *vars)
+{
+	if (vars->max_depth > 0)
+	{
+		if (vars->max_depth <= 10)
+			vars->max_depth -= 1;
+		else if (vars->max_depth <= 50)
+			vars->max_depth -= 5;
+		else
+			vars->max_depth -= 10;
+	}
 }
 
 int	key_press(int kc, t_vars *vars)
@@ -64,6 +102,10 @@ int	key_press(int kc, t_vars *vars)
 		else
 			vars->get_mouse_move = 1;
 	}
+	if (kc == XK_l)
+		inc_max_dep(vars);
+	if (kc == XK_k)
+		dec_max_dep(vars);
 	return (0);
 }
 
@@ -134,18 +176,17 @@ int	main(void)
 
 	if (!init(&vars))
 		return (0);
-	//set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
-	//stuff.f = mandel;
-	//stuff.vars = &vars;
-	//vars.xn = 0;
-	//vars.yn = 0;
-	//vars.get_mouse_move = 0;
-	set_bounds(&vars, -2, 2, -2, 2);
-	stuff.f = julia;
+	set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
+	stuff.f = mandel;
+	vars.xn = 0;
+	vars.yn = 0;
+	//set_bounds(&vars, -2, 2, -2, 2);
+	//stuff.f = julia;
+	//vars.xn = 0.1627;
+	//vars.yn = 0.5717;
 	stuff.vars = &vars;
-	vars.xn = 0.1627;
-	vars.yn = 0.5717;
 	vars.get_mouse_move = 0;
+	vars.max_depth = DEPTH_MAX;
 	mlx_hook(vars.win, 6, 1L << 6, mouse_move, &vars);
 
 	mlx_loop_hook(vars.mlx, for_each_pixel, &stuff);
