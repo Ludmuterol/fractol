@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 03:39:40 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/15 04:00:02 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	put_pixels(t_vars *vars, int x, int y, int i)
 
 	if (vars->depths[x][y] < DEPTH_MAX)
 	{
-		if (vars->depths[x][y] > 0)
+		if (vars->depths[x][y] >= 0)
 		{
 			tmp = (((double)vars->depths[x][y]) / (128)) * 2 * M_PI + i / 5.0;
 			put_pixel(&vars->img, x, y, new_color(0, (sin(tmp) + 1) * 255 / 2, (sin(tmp + 2) + 1) * 255 / 2, (sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
@@ -79,7 +79,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)tmp / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)y1 / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[tmp][y1] = mandel(xtrans, ytrans, 0, 0);
+			stuff->vars->depths[tmp][y1] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[tmp][y1])
 		{
@@ -92,7 +92,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)tmp / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)y2 / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[tmp][y2] = mandel(xtrans, ytrans, 0, 0);
+			stuff->vars->depths[tmp][y2] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[tmp][y2])
 		{
@@ -101,8 +101,6 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 			else
 				ret = 0;
 		}
-		put_pixels(stuff->vars, tmp, y1, 0);
-		put_pixels(stuff->vars, tmp, y2, 0);
 		tmp++;
 	}
 	tmp = y1;
@@ -112,7 +110,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)x1 / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)tmp / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[x1][tmp] = mandel(xtrans, ytrans, 0, 0);
+			stuff->vars->depths[x1][tmp] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[x1][tmp])
 		{
@@ -125,7 +123,7 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		{
 			double xtrans = stuff->vars->xmin + ((double)x2 / WIDTH) * stuff->vars->x_len;
 			double ytrans = stuff->vars->ymax - ((double)tmp / HEIGHT) * stuff->vars->y_len;
-			stuff->vars->depths[x2][tmp] = mandel(xtrans, ytrans, 0, 0);
+			stuff->vars->depths[x2][tmp] = stuff->f(xtrans, ytrans, stuff->vars->xn, stuff->vars->yn);
 		}
 		if (ret && check != stuff->vars->depths[x2][tmp])
 		{
@@ -134,8 +132,6 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 			else
 				ret = 0;
 		}
-		put_pixels(stuff->vars, x1, tmp, 0);
-		put_pixels(stuff->vars, x2, tmp, 0);
 		tmp++;
 	}
 	if (check == DEPTH_MAX)
@@ -156,7 +152,6 @@ void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int 
 			if (stuff->vars->depths[x][y] == -1)
 			{
 				stuff->vars->depths[x][y] = -2;
-				put_pixels(stuff->vars, x, y, 0);
 			}
 			y++;
 		}
@@ -170,7 +165,7 @@ void	rec_box(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
 		fill_rec_black(stuff, x1, y1, x2, y2);
 	else
 	{
-		if (x2 - x1 < 2 || y2 - y1 < 2)
+		if (x2 - x1 < 6 || y2 - y1 < 6)
 			return ;
 		rec_box(stuff, x1, y1, x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2);
 		rec_box(stuff, x1 + (x2 - x1) / 2, y1, x2, y1 + (y2 - y1) / 2);
@@ -182,6 +177,5 @@ void	rec_box(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
 int	for_each_pixel(struct s_for_each_pixel *stuff)
 {
 	rec_box(stuff, 0, 0, WIDTH - 1, HEIGHT - 1);
-	//init_depth_array(stuff->vars->depths);
-	return (mlx_put_image_to_window(stuff->vars->mlx, stuff->vars->win, stuff->vars->img.img, 0, 0));
+	return (O_for_each_pixel(stuff));
 }
