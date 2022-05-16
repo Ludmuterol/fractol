@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 15:33:05 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/16 06:09:42 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 
 # define HEIGHT 800
 # define WIDTH 800
-# define DEPTH_MAX 250
+# define DEPTH_MAX 50
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 # define MOVE 10	//PIXEL - nach links; + nach rechts
@@ -108,6 +108,9 @@ int		mandel(int depth_max, double x, double y, double xn, double yn);
 
 /* FRACTOL_JULIA.c */
 int		julia(int depth_max, double xn, double yn, double x, double y);
+
+/* FRACTOL_NEWTON.C */
+int	newton(int depth_max, double x, double y, double xn, double yn);
 
 /* FRACTOL_DEPTH_ARRAY.C */
 void	move_array(t_vars *vars, int hor, int ver);

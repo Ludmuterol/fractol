@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 15:49:56 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/16 06:15:16 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,30 @@ void	put_pixels(t_vars *vars, int x, int y, int i)
 {
 	double	tmp;
 
-	if (vars->depths[x][y] < vars->max_depth)
-	{
-		if (vars->depths[x][y] >= 0)
-		{
-			put_pixel(&vars->img, x, y, depth_to_col(vars, (double)vars->depths[x][y], i));
-		}
-		else
-		{
-			put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
-		}
-	}
-	else
-		put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
+	t_color tmpc;
+	tmpc = new_color(0, 0, 0, 0, vars->img.endian);
+	if (vars->depths[x][y] == 1)
+		tmpc = new_color(0, 255, 0, 0, vars->img.endian);
+	if (vars->depths[x][y] == 2)
+		tmpc = new_color(0, 0, 255, 0, vars->img.endian);
+	if (vars->depths[x][y] == 3)
+		tmpc = new_color(0, 0, 0, 255, vars->img.endian);
+	if (vars->depths[x][y] == 4)
+		tmpc = new_color(0, 255, 255, 0, vars->img.endian);
+	put_pixel(&vars->img, x, y, tmpc);
+	//if (vars->depths[x][y] < vars->max_depth)
+	//{
+	//	if (vars->depths[x][y] >= 0)
+	//	{
+	//		put_pixel(&vars->img, x, y, depth_to_col(vars, (double)vars->depths[x][y], i));
+	//	}
+	//	else
+	//	{
+	//		put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
+	//	}
+	//}
+	//else
+	//	put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
 }
 
 int	O_for_each_pixel(struct s_for_each_pixel *stuff)
@@ -139,9 +150,10 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		}
 		tmp++;
 	}
-	if (check == stuff->vars->max_depth)
-		return (ret);
-	return (0);
+	//if (check == stuff->vars->max_depth)
+	//	return (ret);
+	//return (0);
+	return (ret);
 }
 
 void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
