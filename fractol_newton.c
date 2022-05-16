@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/16 04:17:43 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 05:56:16 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/16 06:34:56 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	root_closest(double re, double im)
 		return (3);
 	if (dist[3] <= dist[1] && dist[3] <= dist[2] && dist[3] <= dist[0])
 		return (4);
-	return (255);
+	return (0);
 }
 
 //#define TOL 0.00000001

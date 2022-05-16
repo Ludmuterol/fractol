@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 06:15:16 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/16 14:18:36 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,31 +26,37 @@ t_color	depth_to_col(t_vars *vars, double dep, int i)
 void	put_pixels(t_vars *vars, int x, int y, int i)
 {
 	double	tmp;
-
 	t_color tmpc;
-	tmpc = new_color(0, 0, 0, 0, vars->img.endian);
-	if (vars->depths[x][y] == 1)
-		tmpc = new_color(0, 255, 0, 0, vars->img.endian);
-	if (vars->depths[x][y] == 2)
-		tmpc = new_color(0, 0, 255, 0, vars->img.endian);
-	if (vars->depths[x][y] == 3)
-		tmpc = new_color(0, 0, 0, 255, vars->img.endian);
-	if (vars->depths[x][y] == 4)
-		tmpc = new_color(0, 255, 255, 0, vars->img.endian);
-	put_pixel(&vars->img, x, y, tmpc);
-	//if (vars->depths[x][y] < vars->max_depth)
-	//{
-	//	if (vars->depths[x][y] >= 0)
-	//	{
-	//		put_pixel(&vars->img, x, y, depth_to_col(vars, (double)vars->depths[x][y], i));
-	//	}
-	//	else
-	//	{
-	//		put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
-	//	}
-	//}
-	//else
-	//	put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
+
+	if (vars->is_newton)
+	{
+		tmpc = new_color(0, 0, 0, 0, vars->img.endian);
+		if (vars->depths[x][y] == 1)
+			tmpc = new_color(0, 255, 0, 0, vars->img.endian);
+		if (vars->depths[x][y] == 2)
+			tmpc = new_color(0, 0, 255, 0, vars->img.endian);
+		if (vars->depths[x][y] == 3)
+			tmpc = new_color(0, 0, 0, 255, vars->img.endian);
+		if (vars->depths[x][y] == 4)
+			tmpc = new_color(0, 255, 255, 0, vars->img.endian);
+		put_pixel(&vars->img, x, y, tmpc);
+	}
+	else
+	{
+		if (vars->depths[x][y] < vars->max_depth)
+		{
+			if (vars->depths[x][y] >= 0)
+			{
+				put_pixel(&vars->img, x, y, depth_to_col(vars, (double)vars->depths[x][y], i));
+			}
+			else
+			{
+				put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
+			}
+		}
+		else
+			put_pixel(&vars->img, x, y, new_color(0, 0, 0, 0, vars->img.endian));
+	}
 }
 
 int	O_for_each_pixel(struct s_for_each_pixel *stuff)
@@ -150,13 +156,14 @@ int	fill_rec_bord(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2
 		}
 		tmp++;
 	}
-	//if (check == stuff->vars->max_depth)
-	//	return (ret);
-	//return (0);
-	return (ret);
+	if (ret && stuff->vars->is_newton)
+		return (check);
+	if (ret && check == stuff->vars->max_depth)
+		return (stuff->vars->max_depth);
+	return (0);
 }
 
-void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
+void	fill_rec(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2, int value)
 {
 	int	x, y;
 
@@ -168,7 +175,7 @@ void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int 
 		{
 			if (stuff->vars->depths[x][y] == -1)
 			{
-				stuff->vars->depths[x][y] = stuff->vars->max_depth;
+				stuff->vars->depths[x][y] = stuff->vars->max_depth; //value;
 			}
 			y++;
 		}
@@ -178,8 +185,9 @@ void	fill_rec_black(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int 
 
 void	rec_box(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2)
 {
-	if (fill_rec_bord(stuff, x1, y1, x2, y2))
-		fill_rec_black(stuff, x1, y1, x2, y2);
+	int tmp = fill_rec_bord(stuff, x1, y1, x2, y2);
+	if (tmp)
+		fill_rec(stuff, x1, y1, x2, y2, tmp);
 	else
 	{
 		if (x2 - x1 < 5 || y2 - y1 < 5)

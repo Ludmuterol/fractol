@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 06:09:42 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/16 06:24:34 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct	s_vars {
 	int		max_depth;
 	int		depths[WIDTH][HEIGHT];
 	int		get_mouse_move;
+	int		is_newton;
 }				t_vars;
 
 struct s_for_each_pixel
