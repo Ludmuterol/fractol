@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 06:57:40 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/23 17:44:03 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,19 +178,19 @@ int	main(void)
 		return (0);
 	
 	vars.is_newton = 0;
-	//set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
-	//stuff.f = mandel;
-	//vars.xn = 0;
-	//vars.yn = 0;
+	set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
+	stuff.f = mandel;
+	vars.xn = 0;
+	vars.yn = 0;
 	//set_bounds(&vars, -2, 2, -2, 2);
 	//stuff.f = julia;
 	//vars.xn = 0.1627;
 	//vars.yn = 0.5717;
-	set_bounds(&vars, -1, 1, -1, 1);
-	stuff.f = newton;
-	vars.xn = 0.1627;
-	vars.yn = 0.5717;
-	vars.is_newton = 1;
+	//set_bounds(&vars, -1, 1, -1, 1);
+	//stuff.f = newton;
+	//vars.xn = 0.1627;
+	//vars.yn = 0.5717;
+	//vars.is_newton = 1;
 
 	stuff.vars = &vars;
 	vars.get_mouse_move = 0;

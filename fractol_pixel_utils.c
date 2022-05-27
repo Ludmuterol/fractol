@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 14:18:36 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/27 10:25:55 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	coord_to_offset(int x, int y, int line_length, int bits_per_pixel)
 
 t_color	depth_to_col(t_vars *vars, double dep, int i)
 {
-	double tmp = (dep / vars->max_depth) * 2 * M_PI ;
+	double tmp = (dep / vars->max_depth) * 2 * M_PI * (1 + (vars->max_depth / 100.0));
 	return (new_color(0, (sin(tmp) + 1) * 255 / 2, (sin(tmp + 2) + 1) * 255 / 2, (sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
 }
 
@@ -175,7 +175,7 @@ void	fill_rec(struct s_for_each_pixel *stuff, int x1, int y1, int x2, int y2, in
 		{
 			if (stuff->vars->depths[x][y] == -1)
 			{
-				stuff->vars->depths[x][y] = stuff->vars->max_depth; //value;
+				stuff->vars->depths[x][y] = value; //stuff->vars->max_depth;
 			}
 			y++;
 		}

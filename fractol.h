@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 06:24:34 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/27 10:02:03 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,3 +118,32 @@ void	move_array(t_vars *vars, int hor, int ver);
 void	init_depth_array(int in[WIDTH][HEIGHT]);
 
 #endif
+
+//launch.json
+//{
+//	// Use IntelliSense to learn about possible attributes.
+//	// Hover to view descriptions of existing attributes.
+//	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+//	"version": "0.2.0",
+//	"configurations": [
+//		{
+//			"name": "(gdb) Launch",
+//			"type": "cppdbg",
+//			"request": "launch",
+//			"program": "${workspaceFolder}/fractol",
+//            "args": [],
+//            "stopAtEntry": false,
+//            "cwd": "${workspaceFolder}",
+//            "environment": [],
+//            "externalConsole": false,
+//            "MIMode": "gdb",
+//            "setupCommands": [
+//                {
+//                    "description": "Enable pretty-printing for gdb",
+//                    "text": "-enable-pretty-printing",
+//                    "ignoreFailures": true
+//                }
+//            ]
+//        }
+//    ]
+//}
