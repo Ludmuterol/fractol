@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/27 10:02:03 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/27 13:58:25 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 # endif
 # ifdef __APPLE__
 # include "mlx/mlx.h"
-# define XK_Escape                        53
-# define XK_Left                          123
-# define XK_Up                            126
-# define XK_Right                         124
-# define XK_Down                          125
-# define XK_p                             35
+# define XK_Escape                      53
+# define XK_Left                        123
+# define XK_Up                          126
+# define XK_Right                       124
+# define XK_Down                        125
+# define XK_p                           35
+# define XK_k							40
+# define XK_l							37
 # define LCLICK 1
 # define MCLICK 3
 # define RCLICK 2
@@ -42,8 +44,8 @@
 # include <math.h>
 # include <stdlib.h>
 
-# define HEIGHT 800
-# define WIDTH 800
+# define HEIGHT 1000
+# define WIDTH 1000
 # define DEPTH_MAX 50
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0

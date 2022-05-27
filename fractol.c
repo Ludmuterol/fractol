@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/23 17:44:03 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/27 13:40:41 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	key_press(int kc, t_vars *vars)
 
 	if (kc == XK_Escape)
 		exit(0);
-	if (kc >= XK_Left && kc <= XK_Down)
+	if (kc == XK_Left || kc == XK_Down || kc == XK_Up || kc == XK_Right)
 	{
 		if (kc == XK_Right || kc == XK_Left)
 		{
@@ -88,7 +88,7 @@ int	key_press(int kc, t_vars *vars)
 		}
 		if (kc == XK_Up || kc == XK_Down)
 		{
-			tmp = (vars->y_len / HEIGHT) * MOVE * (1 - (kc == XK_Down) * 2);
+			tmp = (vars->y_len / HEIGHT) * MOVE * (1 - ((kc == XK_Down) * 2));
 			vars->ymin += tmp;
 			vars->ymax += tmp;
 			move_array(vars, 0, MOVE - 2 * MOVE * (kc == XK_Down));
