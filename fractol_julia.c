@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 00:24:08 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/15 15:16:45 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/06/01 04:21:31 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,18 @@
 //https://theses.liacs.nl/pdf/2018-2019-JonckheereLSde.pdf
 //http://www.nongnu.org/hpalib/
 //https://scipython.com/book2/chapter-8-scipy/examples/the-newton-fractal/
-int	julia(int depth_max, double xn, double yn, double x, double y)
+//https://www.ibiblio.org/e-notes/MSet/TheAlmondBreadHomepage.htm
+int	julia(struct s_fract_arguments *s)
 {
 	int		depth;
 	double	tmp;
 
 	depth = 0;
-	while ((xn * xn + yn * yn <= 4) && depth < depth_max)
+	while ((s->x * s->x + s->y * s->y <= 4) && depth < s->depth_max)
 	{
-		tmp = xn * xn - yn * yn + x;
-		yn = 2 * xn * yn + y;
-		xn = tmp;
+		tmp = s->x * s->x - s->y * s->y + s->xn;
+		s->y = 2 * s->x * s->y + s->yn;
+		s->x = tmp;
 		depth++;
 	}
 	return (depth);

@@ -6,20 +6,16 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/16 04:17:43 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/16 06:34:56 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/05/31 22:41:24 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-//https://theses.liacs.nl/pdf/2018-2019-JonckheereLSde.pdf
-//http://www.nongnu.org/hpalib/
-//https://scipython.com/book2/chapter-8-scipy/examples/the-newton-fractal/
-
 static double	newton_f(double re, double im, int real)
 {
 	if (real)
-		return (pow(re, 4) -6 * pow(re, 2) * pow(im, 2) + pow(im, 4) - 1);
+		return (pow(re, 4) - 6 * pow(re, 2) * pow(im, 2) + pow(im, 4) - 1);
 	return (4 * pow(re, 3) * im - 4 * re * pow(im, 3));
 }
 
@@ -37,7 +33,8 @@ static double	root_dist(double re, double im, double re2, double im2)
 
 static int	root_closest(double re, double im)
 {
-	double dist[4];
+	double	dist[4];
+
 	dist[0] = root_dist(re, im, 0, 1);
 	dist[1] = root_dist(re, im, 0, -1);
 	dist[2] = root_dist(re, im, 1, 0);
@@ -54,22 +51,25 @@ static int	root_closest(double re, double im)
 }
 
 //#define TOL 0.00000001
-
-int	newton(int depth_max, double x, double y, double xnot, double ynot)
+//int	newton(int depth_max, double x, double y, double xnot, double ynot)
+int	newton(struct s_fract_arguments *s)
 {
-	int tmp = 0;
-	double xn = x;
-	double yn = y;
-	while (tmp < depth_max)
+	int		tmp;
+	double	a;
+	double	b;
+	double	c;
+	double	d;
+
+	tmp = 0;
+	while (tmp < s->depth_max)
 	{
-		double a = newton_f( xn, yn, 1);
-		double b = newton_f( xn, yn, 0);
-		double c = newton_fp( xn, yn, 1);
-		double d = newton_fp( xn, yn, 0);
-		xn -= (a*c + b*d) / (pow(c, 2) + pow(d, 2));
-		yn -= (b*c - a*d) / (pow(c, 2) + pow(d, 2));
+		a = newton_f(s->x, s->y, 1);
+		b = newton_f(s->x, s->y, 0);
+		c = newton_fp(s->x, s->y, 1);
+		d = newton_fp(s->x, s->y, 0);
+		s->x -= (a * c + b * d) / (pow(c, 2) + pow(d, 2));
+		s->y -= (b * c - a * d) / (pow(c, 2) + pow(d, 2));
 		tmp++;
 	}
-
-	return (root_closest(xn, yn));
+	return (root_closest(s->x, s->y));
 }

@@ -6,11 +6,11 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/05/16 05:15:58 by tpeters          ###   ########.fr        #
+#    Updated: 2022/05/31 22:42:56 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = fractol.c fractol_color_utils.c fractol_pixel_utils.c fractol_mandelbrot.c fractol_depth_array.c fractol_julia.c fractol_newton.c
+SRCS = fractol.c fractol_color_utils.c fractol_pixel_utils.c fractol_mandelbrot.c fractol_depth_array.c fractol_julia.c fractol_newton.c fractol_rect_optimization.c
 OBJS = $(SRCS:.c=.o)
 NAME = fractol
 

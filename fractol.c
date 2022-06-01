@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/27 13:40:41 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/06/01 04:13:48 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int	init(t_vars *vars)
 	vars->img.img = mlx_new_image(vars->mlx, WIDTH, HEIGHT);
 	if (!vars->img.img)
 		return (mlx_destroy_window(vars->mlx, vars->win));
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bits_per_pixel, &vars->img.line_length, &vars->img.endian);
+	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bpp, &vars->img.line_length, &vars->img.endian);
 	if (!vars->img.addr)
 	{
 		mlx_destroy_window(vars->mlx, vars->win);
@@ -169,6 +169,7 @@ int	mouse_move(int x, int y, t_vars *vars)
 }
 
 //set_bounds(&vars, -0.7545898, -0.7467773, -0.0617773, -0.0695898);
+//set_bounds(&vars, −0.7475087485, −0.7475087322, 0.0830715266, 0.0830715359)
 int	main(void)
 {
 	t_vars					vars;
@@ -176,16 +177,15 @@ int	main(void)
 
 	if (!init(&vars))
 		return (0);
-	
 	vars.is_newton = 0;
-	set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
-	stuff.f = mandel;
-	vars.xn = 0;
-	vars.yn = 0;
-	//set_bounds(&vars, -2, 2, -2, 2);
-	//stuff.f = julia;
-	//vars.xn = 0.1627;
-	//vars.yn = 0.5717;
+	//set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
+	//stuff.f = mandel;
+	//vars.xn = 0;
+	//vars.yn = 0;
+	set_bounds(&vars, -2, 2, -2, 2);
+	stuff.f = julia;
+	vars.xn = 0.1627;
+	vars.yn = 0.5717;
 	//set_bounds(&vars, -1, 1, -1, 1);
 	//stuff.f = newton;
 	//vars.xn = 0.1627;

@@ -6,73 +6,62 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/27 13:58:25 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/06/01 04:19:18 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TEST_H
-# define TEST_H
+#ifndef FRACTOL_H
+# define FRACTOL_H
 
 # ifdef _WIN32
 # endif
 # ifdef __APPLE__
-# include "mlx/mlx.h"
-# define XK_Escape                      53
-# define XK_Left                        123
-# define XK_Up                          126
-# define XK_Right                       124
-# define XK_Down                        125
-# define XK_p                           35
-# define XK_k							40
-# define XK_l							37
-# define LCLICK 1
-# define MCLICK 3
-# define RCLICK 2
-# define SCRL_UP 4
-# define SCRL_DWN 5
+#  include "mlx/mlx.h"
+#  define XK_Escape                      53
+#  define XK_Left                        123
+#  define XK_Up                          126
+#  define XK_Right                       124
+#  define XK_Down                        125
+#  define XK_p                           35
+#  define XK_k							40
+#  define XK_l							37
+#  define LCLICK 1
+#  define MCLICK 3
+#  define RCLICK 2
+#  define SCRL_UP 4
+#  define SCRL_DWN 5
 # endif
 # ifdef unix
-# include "mlx_linux/mlx.h"
-# include <X11/keysym.h>
-# define LCLICK 1
-# define MCLICK 2
-# define RCLICK 3
-# define SCRL_UP 4
-# define SCRL_DWN 5
+#  include "mlx_linux/mlx.h"
+#  include <X11/keysym.h>
+#  define LCLICK 1
+#  define MCLICK 2
+#  define RCLICK 3
+#  define SCRL_UP 4
+#  define SCRL_DWN 5
 # endif
 
 # include <math.h>
 # include <stdlib.h>
 
-# define HEIGHT 1000
-# define WIDTH 1000
+# define HEIGHT 500
+# define WIDTH 500
 # define DEPTH_MAX 50
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 # define MOVE 10	//PIXEL - nach links; + nach rechts
 
-typedef struct s_data {
+typedef struct s_data
+{
 	void	*img;
 	char	*addr;
-	int		bits_per_pixel;
+	int		bpp;
 	int		line_length;
 	int		endian;
 }	t_data;
 
-typedef union u_color
+typedef struct s_vars
 {
-	struct
-	{
-		unsigned char	t;
-		unsigned char	r;
-		unsigned char	g;
-		unsigned char	b;
-	};
-	int	color;
-}	t_color;
-
-
-typedef struct	s_vars {
 	void	*mlx;
 	void	*win;
 	t_data	img;
@@ -88,64 +77,70 @@ typedef struct	s_vars {
 	int		depths[WIDTH][HEIGHT];
 	int		get_mouse_move;
 	int		is_newton;
-}				t_vars;
+}	t_vars;
+
+typedef union u_color
+{
+	struct
+	{
+		unsigned char	t;
+		unsigned char	r;
+		unsigned char	g;
+		unsigned char	b;
+	};
+	int	color;
+}	t_color;
+
+struct s_fract_arguments
+{
+	int		depth_max;
+	double	x;
+	double	y;
+	double	xn;
+	double	yn;
+};
+
+struct s_rect_args
+{
+	struct s_for_each_pixel	*stuff;
+	int						x1;
+	int						y1;
+	int						x2;
+	int						y2;
+};
 
 struct s_for_each_pixel
 {
 	t_vars	*vars;
-	int (*f)(int depth_max, double x, double y, double xn, double yn);
+	int		(*f)(struct s_fract_arguments *stuff);
 };
 
 /* FRACTOL_COLOR_UTILS.C */
-t_color	new_color(unsigned char t, unsigned char r, unsigned char g, unsigned char b, int endian);
+t_color	new_color(char r, char g, char b, int endian);
 void	put_pixel(t_data *img, int x, int y, t_color color);
-t_color hsv2rgb(t_color HSV, int endian);
+void	fill_rec(struct s_rect_args *s, int value);
+t_color	depth_to_col(t_vars *vars, double dep, int i);
+
+/* FRACTOL_MANDELBROT.C */
+int		mandel(struct s_fract_arguments *s);
+
+/* FRACTOL_JULIA.c */
+int		julia(struct s_fract_arguments *s);
+
+/* FRACTOL_NEWTON.C */
+int		newton(struct s_fract_arguments *s);
 
 /* FRACTOL_PIXEL_UTILS.C */
 int		coord_to_offset(int x, int y, int line_length, int bits_per_pixel);
 int		for_each_pixel(struct s_for_each_pixel *stuff);
 void	put_pixels(t_vars *vars, int x, int y, int i);
 
-/* FRACTOL_MANDELBROT.C */
-int		mandel(int depth_max, double x, double y, double xn, double yn);
-
-/* FRACTOL_JULIA.c */
-int		julia(int depth_max, double xn, double yn, double x, double y);
-
-/* FRACTOL_NEWTON.C */
-int	newton(int depth_max, double x, double y, double xn, double yn);
-
 /* FRACTOL_DEPTH_ARRAY.C */
 void	move_array(t_vars *vars, int hor, int ver);
 void	init_depth_array(int in[WIDTH][HEIGHT]);
 
-#endif
+/* FRACTOL_RECT_OPTIMIZATION.C */
+int		fill_rec_bord(struct s_rect_args *s);
+void	rec_box(struct s_rect_args *s);
 
-//launch.json
-//{
-//	// Use IntelliSense to learn about possible attributes.
-//	// Hover to view descriptions of existing attributes.
-//	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-//	"version": "0.2.0",
-//	"configurations": [
-//		{
-//			"name": "(gdb) Launch",
-//			"type": "cppdbg",
-//			"request": "launch",
-//			"program": "${workspaceFolder}/fractol",
-//            "args": [],
-//            "stopAtEntry": false,
-//            "cwd": "${workspaceFolder}",
-//            "environment": [],
-//            "externalConsole": false,
-//            "MIMode": "gdb",
-//            "setupCommands": [
-//                {
-//                    "description": "Enable pretty-printing for gdb",
-//                    "text": "-enable-pretty-printing",
-//                    "ignoreFailures": true
-//                }
-//            ]
-//        }
-//    ]
-//}
+#endif
