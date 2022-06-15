@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 19:57:41 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/01 04:06:28 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/06/15 23:08:15 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,11 @@ t_color	depth_to_col(t_vars *vars, double dep, int i)
 			return (new_color(0, 255, 0, vars->img.endian));
 		if (dep == 3)
 			return (new_color(0, 0, 255, vars->img.endian));
-		if (dep == 4)
+		else
 			return (new_color(255, 255, 0, vars->img.endian));
 	}
-	else
-	{
-		tmp = ((dep) / vars->max_depth) * 2 * M_PI + i / 25.0;
-		return (new_color((sin(tmp) + 1) * 255 / 2,
-				(sin(tmp + 2) + 1) * 255 / 2,
-				(sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
-	}
+	tmp = ((dep) / vars->max_depth) * 2 * M_PI + i / 25.0;
+	return (new_color((sin(tmp) + 1) * 255 / 2,
+			(sin(tmp + 2) + 1) * 255 / 2,
+			(sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
 }

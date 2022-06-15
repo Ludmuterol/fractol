@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 22:39:26 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/01 03:11:57 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/06/15 23:00:55 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	fill_rec_bord(struct s_rect_args *s)
 		}
 		tmp++;
 	}
-	if ((ret > 1 && mandel) || (ret && !mandel))
+	if ((ret > 1 && s->stuff->f == mandel) || (ret && s->stuff->f != mandel))
 		return (check);
 	return (0);
 }
