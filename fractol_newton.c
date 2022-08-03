@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/16 04:17:43 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/31 22:41:24 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 13:25:42 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ static int	root_closest(double re, double im)
 	return (0);
 }
 
-//#define TOL 0.00000001
-//int	newton(int depth_max, double x, double y, double xnot, double ynot)
 int	newton(struct s_fract_arguments *s)
 {
 	int		tmp;

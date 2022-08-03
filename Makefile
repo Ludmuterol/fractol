@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/05/31 22:42:56 by tpeters          ###   ########.fr        #
+#    Updated: 2022/08/03 17:47:34 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ SRCS = fractol.c fractol_color_utils.c fractol_pixel_utils.c fractol_mandelbrot.
 OBJS = $(SRCS:.c=.o)
 NAME = fractol
 
-CFLAGS = #-Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 CC = cc
 
 
@@ -27,12 +27,14 @@ else
     endif
     ifeq ($(UNAME_S),Darwin)
         CFLAGS += -Imlx
-		LINK_FLAGS = -Lmlx -lmlx -framework OpenGL -framework AppKit
+		LINK_FLAGS = -Llibft -lft -Lmlx -lmlx -framework OpenGL -framework AppKit
     endif
 endif
 
 exec: $(NAME)
 	./$(NAME)
+
+all: $(NAME)
 
 debug :
 	$(CC) $(CFLAGS) -g -c $(SRCS)

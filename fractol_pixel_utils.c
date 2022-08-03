@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/01 04:07:46 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 14:25:23 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int	coord_to_offset(int x, int y, int line_length, int bits_per_pixel)
 
 void	put_pixels(t_vars *vars, int x, int y, int i)
 {
-	double	tmp;
-
 	if (vars->depths[x][y] < vars->max_depth)
 	{
 		if (vars->depths[x][y] >= 0)
@@ -31,11 +29,11 @@ void	put_pixels(t_vars *vars, int x, int y, int i)
 		else
 		{
 			put_pixel(&vars->img, x, y,
-				new_color(0, 0, 0, vars->img.endian));
+				new_color(0, 0, 0, vars->img.endi));
 		}
 	}
 	else
-		put_pixel(&vars->img, x, y, new_color(0, 0, 0, vars->img.endian));
+		put_pixel(&vars->img, x, y, new_color(0, 0, 0, vars->img.endi));
 }
 
 static void	bf_pixl(struct s_for_each_pixel *s, int *dep, double xt, double yt)
@@ -53,7 +51,6 @@ static void	bf_pixl(struct s_for_each_pixel *s, int *dep, double xt, double yt)
 	}
 }
 
-//init_depth_array(stuff->vars->depths); vor return
 static int	bf_and_put_all_pixels(struct s_for_each_pixel *stuff, int i)
 {
 	int							x;

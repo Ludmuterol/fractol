@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 22:39:26 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/15 23:00:55 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 17:45:35 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	fill_rec_bord(struct s_rect_args *s)
 		}
 		tmp++;
 	}
-	if ((ret > 1 && s->stuff->f == mandel) || (ret && s->stuff->f != mandel))
+	if (ret && ((check > 1 && s->stuff->f == mandel) || s->stuff->f != mandel))
 		return (check);
 	return (0);
 }
@@ -96,6 +96,7 @@ static void	rec_rec_box_call(struct s_rect_args *s)
 	rec_box(&stuff);
 }
 
+//change fill_rec(s, tmp) to fill_rec(s, 5)
 void	rec_box(struct s_rect_args *s)
 {
 	int					tmp;

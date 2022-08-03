@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/15 23:51:21 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 14:29:29 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@
 
 # include <math.h>
 # include <stdlib.h>
+# include "libft/libft.h"
 
 # define HEIGHT 500
 # define WIDTH 500
@@ -56,8 +57,8 @@ typedef struct s_data
 	void	*img;
 	char	*addr;
 	int		bpp;
-	int		line_length;
-	int		endian;
+	int		ll;
+	int		endi;
 }	t_data;
 
 typedef struct s_vars
@@ -115,8 +116,16 @@ struct s_for_each_pixel
 	int		(*f)(struct s_fract_arguments *stuff);
 };
 
+typedef struct s_bounds
+{
+	double	a;
+	double	b;
+	double	c;
+	double	d;
+}	t_bounds;
+
 /* FRACTOL_COLOR_UTILS.C */
-t_color	new_color(char r, char g, char b, int endian);
+t_color	new_color(unsigned char r, unsigned char g, unsigned char b, int endi);
 void	put_pixel(t_data *img, int x, int y, t_color color);
 void	fill_rec(struct s_rect_args *s, int value);
 t_color	depth_to_col(t_vars *vars, double dep, int i);

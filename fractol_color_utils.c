@@ -6,14 +6,13 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 19:57:41 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/15 23:08:15 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 13:58:49 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-//endian = 0 -> Windows
-t_color	new_color(char r, char g, char b, int endian)
+t_color	new_color(unsigned char r, unsigned char g, unsigned char b, int endian)
 {
 	t_color	ret;
 
@@ -36,11 +35,10 @@ void	put_pixel(t_data *img, int x, int y, t_color color)
 {
 	char	*dst;
 
-	dst = img->addr + coord_to_offset(x, y, img->line_length, img->bpp);
+	dst = img->addr + coord_to_offset(x, y, img->ll, img->bpp);
 	*(unsigned int *)dst = color.color;
 }
 
-//s->stuff->vars->depths[x][y] = s->stuff->vars->max_depth / 2; value;
 void	fill_rec(struct s_rect_args *s, int value)
 {
 	int	x;
@@ -69,16 +67,16 @@ t_color	depth_to_col(t_vars *vars, double dep, int i)
 	if (vars->is_newton)
 	{
 		if (dep == 1)
-			return (new_color(255, 0, 0, vars->img.endian));
+			return (new_color(255, 0, 0, vars->img.endi));
 		if (dep == 2)
-			return (new_color(0, 255, 0, vars->img.endian));
+			return (new_color(0, 255, 0, vars->img.endi));
 		if (dep == 3)
-			return (new_color(0, 0, 255, vars->img.endian));
+			return (new_color(0, 0, 255, vars->img.endi));
 		else
-			return (new_color(255, 255, 0, vars->img.endian));
+			return (new_color(255, 255, 0, vars->img.endi));
 	}
 	tmp = ((dep) / vars->max_depth) * 2 * M_PI + i / 25.0;
 	return (new_color((sin(tmp) + 1) * 255 / 2,
 			(sin(tmp + 2) + 1) * 255 / 2,
-			(sin(tmp + 4) + 1) * 255 / 2, vars->img.endian));
+			(sin(tmp + 4) + 1) * 255 / 2, vars->img.endi));
 }

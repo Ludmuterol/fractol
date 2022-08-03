@@ -6,13 +6,13 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/06/15 23:10:13 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/03 17:18:50 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-int	quit(t_vars *vars)
+int	quit(void)
 {
 	exit(0);
 	return (0);
@@ -24,12 +24,12 @@ void	calc_len(t_vars *vars)
 	vars->y_len = (vars->ymax - vars->ymin);
 }
 
-void	set_bounds(t_vars *vars, double a, double b, double c, double d)
+void	set_bounds(t_vars *vars, t_bounds in)
 {
-	vars->xmin = a;
-	vars->xmax = b;
-	vars->ymin = c;
-	vars->ymax = d;
+	vars->xmin = in.a;
+	vars->xmax = in.b;
+	vars->ymin = in.c;
+	vars->ymax = in.d;
 	calc_len(vars);
 }
 
@@ -71,37 +71,35 @@ void	dec_max_dep(t_vars *vars)
 	}
 }
 
-int	key_press(int kc, t_vars *vars)
+void	arrow_key_press(int kc, t_vars *vars)
 {
 	double	tmp;
 
+	if (kc == XK_Right || kc == XK_Left)
+	{
+		tmp = (vars->x_len / WIDTH) * MOVE * (1 - (kc == XK_Left) * 2);
+		vars->xmin += tmp;
+		vars->xmax += tmp;
+		move_array(vars, -MOVE + 2 * MOVE * (kc == XK_Left), 0);
+	}
+	if (kc == XK_Up || kc == XK_Down)
+	{
+		tmp = (vars->y_len / HEIGHT) * MOVE * (1 - ((kc == XK_Down) * 2));
+		vars->ymin += tmp;
+		vars->ymax += tmp;
+		move_array(vars, 0, MOVE - 2 * MOVE * (kc == XK_Down));
+	}
+	calc_len(vars);
+}
+
+int	key_press(int kc, t_vars *vars)
+{
 	if (kc == XK_Escape)
 		exit(0);
 	if (kc == XK_Left || kc == XK_Down || kc == XK_Up || kc == XK_Right)
-	{
-		if (kc == XK_Right || kc == XK_Left)
-		{
-			tmp = (vars->x_len / WIDTH) * MOVE * (1 - (kc == XK_Left) * 2);
-			vars->xmin += tmp;
-			vars->xmax += tmp;
-			move_array(vars, -MOVE + 2 * MOVE * (kc == XK_Left), 0);
-		}
-		if (kc == XK_Up || kc == XK_Down)
-		{
-			tmp = (vars->y_len / HEIGHT) * MOVE * (1 - ((kc == XK_Down) * 2));
-			vars->ymin += tmp;
-			vars->ymax += tmp;
-			move_array(vars, 0, MOVE - 2 * MOVE * (kc == XK_Down));
-		}
-		calc_len(vars);
-	}
+		arrow_key_press(kc, vars);
 	if (kc == XK_p)
-	{
-		if (vars->get_mouse_move)
-			vars->get_mouse_move = 0;
-		else
-			vars->get_mouse_move = 1;
-	}
+		vars->get_mouse_move = !vars->get_mouse_move;
 	if (kc == XK_l)
 		inc_max_dep(vars);
 	if (kc == XK_k)
@@ -111,10 +109,9 @@ int	key_press(int kc, t_vars *vars)
 
 int	mouse_hook(int button, int x, int y, t_vars *vars)
 {
-	double	x_dist;
-	double	y_dist;
-	double	mouse_x;
-	double	mouse_y;
+	double		x_dist;
+	double		y_dist;
+	t_bounds	b;
 
 	if (button == SCRL_UP || button == SCRL_DWN)
 	{
@@ -128,32 +125,35 @@ int	mouse_hook(int button, int x, int y, t_vars *vars)
 			x_dist = (vars->x_len / ZOOM) / 2;
 			y_dist = (vars->y_len / ZOOM) / 2;
 		}
-		mouse_x = vars->xmin + (((double)x / WIDTH) * vars->x_len);
-		mouse_y = vars->ymax - (((double)y / HEIGHT) * vars->y_len);
-		set_bounds(vars, mouse_x - x_dist, mouse_x + x_dist, mouse_y - y_dist, mouse_y + y_dist);
+		b.a = vars->xmin + (((double)x / WIDTH) * vars->x_len) - x_dist;
+		b.b = vars->xmin + (((double)x / WIDTH) * vars->x_len) + x_dist;
+		b.c = vars->ymax - (((double)y / HEIGHT) * vars->y_len) - y_dist;
+		b.d = vars->ymax - (((double)y / HEIGHT) * vars->y_len) + y_dist;
+		set_bounds(vars, b);
 		init_depth_array(vars->depths);
 	}
 	return (0);
 }
 
-int	init(t_vars *vars)
+int	init(t_vars *v)
 {
-	vars->mlx = mlx_init();
-	if (!vars->mlx)
+	v->mlx = mlx_init();
+	if (!v->mlx)
 		return (0);
-	vars->win = mlx_new_window(vars->mlx, WIDTH, HEIGHT, "Hello world!");
-	if (!vars->win)
+	v->win = mlx_new_window(v->mlx, WIDTH, HEIGHT, "Hello world!");
+	if (!v->win)
 		return (0);
-	vars->img.img = mlx_new_image(vars->mlx, WIDTH, HEIGHT);
-	if (!vars->img.img)
-		return (mlx_destroy_window(vars->mlx, vars->win));
-	vars->img.addr = mlx_get_data_addr(vars->img.img, &vars->img.bpp, &vars->img.line_length, &vars->img.endian);
-	if (!vars->img.addr)
+	v->img.img = mlx_new_image(v->mlx, WIDTH, HEIGHT);
+	if (!v->img.img)
+		return (mlx_destroy_window(v->mlx, v->win));
+	v->img.addr = mlx_get_data_addr(v->img.img, &v->img.bpp, \
+									&v->img.ll, &v->img.endi);
+	if (!v->img.addr)
 	{
-		mlx_destroy_window(vars->mlx, vars->win);
-		return (mlx_destroy_image(vars->mlx, vars->img.img));
+		mlx_destroy_window(v->mlx, v->win);
+		return (mlx_destroy_image(v->mlx, v->img.img));
 	}
-	init_depth_array(vars->depths);
+	init_depth_array(v->depths);
 	return (1);
 }
 
@@ -168,29 +168,18 @@ int	mouse_move(int x, int y, t_vars *vars)
 	return (0);
 }
 
-//set_bounds(&vars, -0.7545898, -0.7467773, -0.0617773, -0.0695898);
-//set_bounds(&vars, −0.7475087485, −0.7475087322, 0.0830715266, 0.0830715359)
-int	main(void)
+int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn, double yn, int is_newton)
 {
 	t_vars					vars;
 	struct s_for_each_pixel	stuff;
 
 	if (!init(&vars))
 		return (0);
-	vars.is_newton = 0;
-	set_bounds(&vars, -1 - (WIDTH / 320.0), -1 + (WIDTH / 320.0), 0 + (HEIGHT / 320.0), 0 - (HEIGHT / 320.0));
-	stuff.f = mandel;
-	vars.xn = 0;
-	vars.yn = 0;
-	//set_bounds(&vars, -2, 2, -2, 2);
-	//stuff.f = julia;
-	//vars.xn = 0.1627;
-	//vars.yn = 0.5717;
-	//set_bounds(&vars, -1, 1, -1, 1);
-	//stuff.f = newton;
-	//vars.xn = 0.1627;
-	//vars.yn = 0.5717;
-	//vars.is_newton = 1;
+	vars.is_newton = is_newton;
+	set_bounds(&vars, b);
+	stuff.f = f;
+	vars.xn = xn;
+	vars.yn = yn;
 
 	stuff.vars = &vars;
 	vars.get_mouse_move = 0;
@@ -199,8 +188,90 @@ int	main(void)
 
 	mlx_loop_hook(vars.mlx, for_each_pixel, &stuff);
 	mlx_hook(vars.win, 2, 1L << 0, key_press, &vars);
-	mlx_hook(vars.win, 17, 0, quit, &vars);
+	mlx_hook(vars.win, 17, 0, quit, 0);
 	mlx_mouse_hook(vars.win, mouse_hook, &vars);
 	mlx_loop(vars.mlx);
+	return (0);
+}
+
+#include <stdio.h>
+void	prnt_how_to_use()
+{
+	printf("fractol MODE [XMIN XMAX YMIN YMAX]\n");
+	printf("Possible Values for MODE:\n");
+	printf("\tMANDELBROT\n");
+	printf("\tJULIA\n");
+	printf("\tNEWTON\n");
+	printf("XMIN, XMAX, YMIN, YMAX as floats\n");
+	printf("\t whole numbers: e.g fractol MANDELBROT -2. 2. -2. 2.\n");
+	exit(0);
+}
+
+void	args_to_bounds(t_bounds *b, char *argv[], int *err)
+{
+	int	error;
+
+	error = 0;
+	b->a = ft_atod(argv[2], &error);
+	b->b = ft_atod(argv[3], &error);
+	b->c = ft_atod(argv[4], &error);
+	b->d = ft_atod(argv[5], &error);
+	if (error)
+		*err = 0;
+	printf("%lf, %lf, %lf, %lf\n", b->a, b->b, b->c, b->d);
+}
+
+//set_bounds(&vars, -0.7545898 -0.7467773 -0.0617773 -0.0695898);
+//set_bounds(&vars, −0.7475087485 −0.7475087322 0.0830715266 0.0830715359)
+int	main(int argc, char *argv[])
+{
+	t_bounds	b;
+	int			correct_params;
+
+	correct_params = 1;	
+	if ((argc == 2 || argc == 6))
+	{
+		if (!ft_strcmp(argv[1], "MANDELBROT"))
+		{
+			if (argc == 6)
+				args_to_bounds(&b, argv, &correct_params);
+			else
+			{
+				b.a = -1 - (WIDTH / 320.0);
+				b.b = -1 + (WIDTH / 320.0);
+				b.c = 0 + (HEIGHT / 320.0);
+				b.d = 0 - (HEIGHT / 320.0);
+			}
+			if (correct_params)
+				return (after_args(b, mandel, 0, 0, 0));
+		} else if (!ft_strcmp(argv[1], "JULIA"))
+		{
+			if (argc == 6)
+				args_to_bounds(&b, argv, &correct_params);
+			else
+			{
+				b.a = -2;
+				b.b = 2;
+				b.c = -2;
+				b.d = 2;
+			}
+			if (correct_params)
+				return (after_args(b, julia, 0.1627, 0.5717, 0));
+		} else if (!ft_strcmp(argv[1], "NEWTON"))
+		{
+			if (argc == 6)
+				args_to_bounds(&b, argv, &correct_params);
+			else
+			{
+				b.a = -1;
+				b.b = 1;
+				b.c = -1;
+				b.d = 1;
+			}
+			if (correct_params)
+				return (after_args(b, newton, 0, 0, 1));
+		}
+	}
+	prnt_how_to_use();
 	return (0);
 }
