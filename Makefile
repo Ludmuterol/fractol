@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/03 17:47:34 by tpeters          ###   ########.fr        #
+#    Updated: 2022/08/04 19:01:18 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,10 +31,11 @@ else
     endif
 endif
 
-exec: $(NAME)
-	./$(NAME)
-
 all: $(NAME)
+
+lsan: CFLAGS += -ILeakSanitizer-main -Wno-gnu-include-next
+lsan: LINK_FLAGS += -LLeakSanitizer-main -llsan -lc++
+lsan: all
 
 debug :
 	$(CC) $(CFLAGS) -g -c $(SRCS)

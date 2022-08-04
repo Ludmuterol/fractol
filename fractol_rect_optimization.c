@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 22:39:26 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/03 17:45:35 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/04 17:18:46 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ static int	fill_coord(struct s_rect_args *s, int x, int y)
 		fs.y -= ((double)y / HEIGHT) * s->stuff->vars->y_len;
 		fs.xn = s->stuff->vars->xn;
 		fs.yn = s->stuff->vars->yn;
+		if (s->stuff->f == mandel)
+		{
+			fs.xn = 0;
+			fs.yn = 0;	
+		}
 		s->stuff->vars->depths[x][y] = s->stuff->f(&fs);
 	}
 	return (s->stuff->vars->depths[x][y]);
@@ -96,14 +101,22 @@ static void	rec_rec_box_call(struct s_rect_args *s)
 	rec_box(&stuff);
 }
 
-//change fill_rec(s, tmp) to fill_rec(s, 5)
+//change fill_rec(s, tmp) to fill_rec(s, 2)
 void	rec_box(struct s_rect_args *s)
 {
 	int					tmp;
 
 	tmp = fill_rec_bord(s);
 	if (tmp)
-		fill_rec(s, tmp);
+	{
+		if (s->stuff->vars->show_rects)
+			if (s->stuff->f == newton)
+				fill_rec(s, 0);
+			else
+				fill_rec(s, 2);
+		else
+			fill_rec(s, tmp);
+	}
 	else
 	{
 		if (s->x2 - s->x1 < 5 || s->y2 - s->y1 < 5)

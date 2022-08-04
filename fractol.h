@@ -6,12 +6,13 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/03 14:29:29 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/04 20:04:40 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
 # define FRACTOL_H
+
 
 # ifdef _WIN32
 # endif
@@ -25,6 +26,10 @@
 #  define XK_p                           35
 #  define XK_k							40
 #  define XK_l							37
+#  define XK_r							15
+#  define XK_m							46
+#  define XK_j							38
+#  define XK_n							45
 #  define LCLICK 1
 #  define MCLICK 3
 #  define RCLICK 2
@@ -47,10 +52,10 @@
 
 # define HEIGHT 500
 # define WIDTH 500
-# define DEPTH_MAX 50
+# define DEPTH_MAX 500
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
-# define MOVE 10	//PIXEL - nach links; + nach rechts
+# define MOVE 11	//PIXEL - nach links; + nach rechts
 
 typedef struct s_data
 {
@@ -78,6 +83,7 @@ typedef struct s_vars
 	int		depths[WIDTH][HEIGHT];
 	int		get_mouse_move;
 	int		is_newton;
+	int		show_rects;
 }	t_vars;
 
 typedef union u_color

@@ -6,15 +6,17 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/03 17:18:50 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/04 20:11:47 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-int	quit(void)
+int	quit(t_vars *vars)
 {
-	exit(0);
+	//mlx_destroy_window(vars->mlx, vars->win);
+	//mlx_destroy_image(vars->mlx, vars->img.img);
+	exit(vars->is_newton);
 	return (0);
 }
 
@@ -39,16 +41,21 @@ void	inc_max_dep(t_vars *vars)
 	int	d;
 
 	c = 0;
-	while (c < WIDTH)
+	if (vars->show_rects)
+		init_depth_array(vars->depths);
+	else
 	{
-		d = 0;
-		while (d < HEIGHT)
+		while (c < WIDTH)
 		{
-			if (vars->depths[c][d] == vars->max_depth)
-				vars->depths[c][d] = -1;
-			d++;
+			d = 0;
+			while (d < HEIGHT)
+			{
+				if (vars->depths[c][d] == vars->max_depth)
+					vars->depths[c][d] = -1;
+				d++;
+			}
+			c++;
 		}
-		c++;
 	}
 	if (vars->max_depth < 10)
 		vars->max_depth += 1;
@@ -92,18 +99,44 @@ void	arrow_key_press(int kc, t_vars *vars)
 	calc_len(vars);
 }
 
-int	key_press(int kc, t_vars *vars)
+void	toggle_rects(t_vars *vars)
+{
+	vars->show_rects = !vars->show_rects;
+	init_depth_array(vars->depths);
+}
+
+int	key_press(int kc, struct s_for_each_pixel *s)
 {
 	if (kc == XK_Escape)
 		exit(0);
 	if (kc == XK_Left || kc == XK_Down || kc == XK_Up || kc == XK_Right)
-		arrow_key_press(kc, vars);
+		arrow_key_press(kc, s->vars);
 	if (kc == XK_p)
-		vars->get_mouse_move = !vars->get_mouse_move;
+		s->vars->get_mouse_move = !s->vars->get_mouse_move;
 	if (kc == XK_l)
-		inc_max_dep(vars);
+		inc_max_dep(s->vars);
 	if (kc == XK_k)
-		dec_max_dep(vars);
+		dec_max_dep(s->vars);
+	if (kc == XK_r)
+		toggle_rects(s->vars);
+	if (kc == XK_m)
+	{
+		s->f = mandel;
+		s->vars->is_newton = 0;
+		init_depth_array(s->vars->depths);
+	}
+	if (kc == XK_j)
+	{
+		s->f = julia;
+		s->vars->is_newton = 0;
+		init_depth_array(s->vars->depths);
+	}
+	if (kc == XK_n)
+	{
+		s->f = newton;
+		s->vars->is_newton = 1;
+		init_depth_array(s->vars->depths);
+	}
 	return (0);
 }
 
@@ -140,7 +173,7 @@ int	init(t_vars *v)
 	v->mlx = mlx_init();
 	if (!v->mlx)
 		return (0);
-	v->win = mlx_new_window(v->mlx, WIDTH, HEIGHT, "Hello world!");
+	v->win = mlx_new_window(v->mlx, WIDTH, HEIGHT, "Fractol");
 	if (!v->win)
 		return (0);
 	v->img.img = mlx_new_image(v->mlx, WIDTH, HEIGHT);
@@ -175,7 +208,6 @@ int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn,
 
 	if (!init(&vars))
 		return (0);
-	vars.is_newton = is_newton;
 	set_bounds(&vars, b);
 	stuff.f = f;
 	vars.xn = xn;
@@ -184,11 +216,13 @@ int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn,
 	stuff.vars = &vars;
 	vars.get_mouse_move = 0;
 	vars.max_depth = DEPTH_MAX;
+	vars.is_newton = is_newton;
+	vars.show_rects = 0;
 	mlx_hook(vars.win, 6, 1L << 6, mouse_move, &vars);
 
 	mlx_loop_hook(vars.mlx, for_each_pixel, &stuff);
-	mlx_hook(vars.win, 2, 1L << 0, key_press, &vars);
-	mlx_hook(vars.win, 17, 0, quit, 0);
+	mlx_hook(vars.win, 2, 1L << 0, key_press, &stuff);
+	mlx_hook(vars.win, 17, 0, quit, &vars);
 	mlx_mouse_hook(vars.win, mouse_hook, &vars);
 	mlx_loop(vars.mlx);
 	return (0);
