@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 19:57:41 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/04 19:54:41 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:13:32 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_color	depth_to_col(t_vars *vars, double dep, int i)
 	if (vars->max_depth >= 80)
 		tmp = ((dep) / 80) * 2 * M_PI + i / 25.0;
 	else
-		tmp = ((dep) / vars->max_depth) * 2 * M_PI + i / 25.0;	
+		tmp = ((dep) / vars->max_depth) * 2 * M_PI + i / 25.0;
 	return (new_color((sin(tmp) + 1) * 255 / 2,
 			(sin(tmp + 2) + 1) * 255 / 2,
 			(sin(tmp + 4) + 1) * 255 / 2, vars->img.endi));

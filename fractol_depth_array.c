@@ -6,13 +6,13 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/14 00:08:41 by tpeters           #+#    #+#             */
-/*   Updated: 2022/05/14 00:10:25 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:19:47 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	init_depth_array(int in[WIDTH][HEIGHT])
+void	init_depth_array(int **in)
 {
 	int	c;
 	int	d;
@@ -30,44 +30,70 @@ void	init_depth_array(int in[WIDTH][HEIGHT])
 	}
 }
 
-static void	cp_depth_array(int in[WIDTH][HEIGHT], int out[WIDTH][HEIGHT])
+void	move_array(t_vars *vars, int hor, int ver)
 {
 	int	c;
 	int	d;
 
-	c = 0;
-	while (c < WIDTH)
+	if (hor <= 0)
+		c = 0;
+	else
+		c = WIDTH - 1;
+	while (c >= 0 && c < WIDTH)
 	{
-		d = 0;
-		while (d < HEIGHT)
+		if (ver <= 0)
+			d = 0;
+		else
+			d = HEIGHT - 1;
+		while (d >= 0 && d < HEIGHT)
 		{
-			out[c][d] = in[c][d];
-			d++;
+			if (c - hor >= 0 && c - hor < WIDTH && \
+				d - ver >= 0 && d - ver < HEIGHT)
+				vars->depths[c][d] = vars->depths[c - hor][d - ver];
+			else
+				vars->depths[c][d] = -1;
+			d += -1 + (ver <= 0) * 2;
 		}
-		c++;
+		c += -1 + (hor <= 0) * 2;
 	}
 }
 
-void	move_array(t_vars *vars, int hor, int ver)
+int	**alloc_depth(void)
 {
-	int	tmp[WIDTH][HEIGHT];
+	int	**tmp;
 	int	c;
-	int	d;
 
-	init_depth_array(tmp);
+	tmp = (int **)malloc(sizeof(int *) * WIDTH);
+	if (!tmp)
+		return (NULL);
 	c = 0;
 	while (c < WIDTH)
 	{
-		d = 0;
-		while (d < HEIGHT)
+		tmp[c] = (int *)malloc(sizeof(int) * HEIGHT);
+		if (!tmp)
 		{
-			if (hor && c + hor >= 0 && c + hor < WIDTH)
-				tmp[c + hor][d] = vars->depths[c][d];
-			if (ver && d + ver >= 0 && d + ver < HEIGHT)
-				tmp[c][d + ver] = vars->depths[c][d];
-			d++;
+			while (c > 0)
+			{
+				free(tmp[c - 1]);
+				c--;
+			}
+			free(tmp);
+			return (NULL);
 		}
 		c++;
 	}
-	cp_depth_array(tmp, vars->depths);
+	return (tmp);
+}
+
+void	free_depth(int **in)
+{
+	int	c;
+
+	c = 0;
+	while (c < WIDTH)
+	{
+		free(in[c]);
+		c++;
+	}
+	free(in);
 }

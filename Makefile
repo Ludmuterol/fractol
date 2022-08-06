@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/04 19:01:18 by tpeters          ###   ########.fr        #
+#    Updated: 2022/08/06 20:36:00 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
         CFLAGS += -I/usr/include
-		LINK_FLAGS = -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz -O3
+		LINK_FLAGS = -Llibft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz -O3
     endif
     ifeq ($(UNAME_S),Darwin)
         CFLAGS += -Imlx
@@ -35,6 +35,7 @@ all: $(NAME)
 
 lsan: CFLAGS += -ILeakSanitizer-main -Wno-gnu-include-next
 lsan: LINK_FLAGS += -LLeakSanitizer-main -llsan -lc++
+lsan: fclean
 lsan: all
 
 debug :

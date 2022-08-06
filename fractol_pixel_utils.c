@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/04 17:08:51 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:51:15 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	bf_pixl(struct s_for_each_pixel *s, int *dep, double xt, double yt)
 		if (s->f == mandel)
 		{
 			fs.xn = 0;
-			fs.yn = 0;	
+			fs.yn = 0;
 		}
 		*dep = s->f(&fs);
 	}

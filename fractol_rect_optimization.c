@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 22:39:26 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/04 17:18:46 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:23:32 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	fill_coord(struct s_rect_args *s, int x, int y)
 		if (s->stuff->f == mandel)
 		{
 			fs.xn = 0;
-			fs.yn = 0;	
+			fs.yn = 0;
 		}
 		s->stuff->vars->depths[x][y] = s->stuff->f(&fs);
 	}
@@ -110,10 +110,12 @@ void	rec_box(struct s_rect_args *s)
 	if (tmp)
 	{
 		if (s->stuff->vars->show_rects)
+		{
 			if (s->stuff->f == newton)
 				fill_rec(s, 0);
 			else
 				fill_rec(s, 2);
+		}
 		else
 			fill_rec(s, tmp);
 	}

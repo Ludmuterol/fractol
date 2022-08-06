@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/04 20:11:47 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:43:29 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 int	quit(t_vars *vars)
 {
-	//mlx_destroy_window(vars->mlx, vars->win);
-	//mlx_destroy_image(vars->mlx, vars->img.img);
-	exit(vars->is_newton);
+	mlx_destroy_image(vars->mlx, vars->img.img);
+	mlx_destroy_window(vars->mlx, vars->win);
+	if (vars->depths)
+		free_depth(vars->depths);
+	exit(0);
 	return (0);
 }
 
@@ -57,10 +59,8 @@ void	inc_max_dep(t_vars *vars)
 			c++;
 		}
 	}
-	if (vars->max_depth < 10)
-		vars->max_depth += 1;
-	else if (vars->max_depth < 50)
-		vars->max_depth += 5;
+	if (vars->max_depth < 50)
+		vars->max_depth += 5 - 4 * (vars->max_depth < 10);
 	else
 		vars->max_depth += 10;
 }
@@ -108,7 +108,7 @@ void	toggle_rects(t_vars *vars)
 int	key_press(int kc, struct s_for_each_pixel *s)
 {
 	if (kc == XK_Escape)
-		exit(0);
+		quit(s->vars);
 	if (kc == XK_Left || kc == XK_Down || kc == XK_Up || kc == XK_Right)
 		arrow_key_press(kc, s->vars);
 	if (kc == XK_p)
@@ -186,6 +186,9 @@ int	init(t_vars *v)
 		mlx_destroy_window(v->mlx, v->win);
 		return (mlx_destroy_image(v->mlx, v->img.img));
 	}
+	v->depths = alloc_depth();
+	if (!v->depths)
+		quit(v);
 	init_depth_array(v->depths);
 	return (1);
 }
@@ -231,78 +234,63 @@ int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn,
 #include <stdio.h>
 void	prnt_how_to_use()
 {
-	printf("fractol MODE [XMIN XMAX YMIN YMAX]\n");
+	printf("fractol MODE\n");
 	printf("Possible Values for MODE:\n");
 	printf("\tMANDELBROT\n");
-	printf("\tJULIA\n");
+	printf("\tJULIA [X0 Y0]\n");
 	printf("\tNEWTON\n");
-	printf("XMIN, XMAX, YMIN, YMAX as floats\n");
-	printf("\t whole numbers: e.g fractol MANDELBROT -2. 2. -2. 2.\n");
+	printf("X0, Y0 as floats and only for JULIA\n");
 	exit(0);
 }
 
-void	args_to_bounds(t_bounds *b, char *argv[], int *err)
+void	args_to_init(double *x0, double *y0, char *argv[], int *err)
 {
 	int	error;
 
 	error = 0;
-	b->a = ft_atod(argv[2], &error);
-	b->b = ft_atod(argv[3], &error);
-	b->c = ft_atod(argv[4], &error);
-	b->d = ft_atod(argv[5], &error);
+	*x0 = ft_atod(argv[2], &error);
+	*y0 = ft_atod(argv[3], &error);
 	if (error)
 		*err = 0;
-	printf("%lf, %lf, %lf, %lf\n", b->a, b->b, b->c, b->d);
 }
 
-//set_bounds(&vars, -0.7545898 -0.7467773 -0.0617773 -0.0695898);
-//set_bounds(&vars, −0.7475087485 −0.7475087322 0.0830715266 0.0830715359)
 int	main(int argc, char *argv[])
 {
 	t_bounds	b;
 	int			correct_params;
+	double			x0;
+	double			y0;
 
-	correct_params = 1;	
-	if ((argc == 2 || argc == 6))
+	correct_params = 1;
+	x0 = -0.752;
+	y0 = 0.152;
+	if ((argc == 2 || argc == 4))
 	{
+		if (argc == 4)
+			args_to_init(&x0, &y0, argv, &correct_params);
 		if (!ft_strcmp(argv[1], "MANDELBROT"))
 		{
-			if (argc == 6)
-				args_to_bounds(&b, argv, &correct_params);
-			else
-			{
-				b.a = -1 - (WIDTH / 320.0);
-				b.b = -1 + (WIDTH / 320.0);
-				b.c = 0 + (HEIGHT / 320.0);
-				b.d = 0 - (HEIGHT / 320.0);
-			}
-			if (correct_params)
+			b.a = -1 - (WIDTH / 320.0);
+			b.b = -1 + (WIDTH / 320.0);
+			b.c = 0 + (HEIGHT / 320.0);
+			b.d = 0 - (HEIGHT / 320.0);
+			if (correct_params && argc == 2)
 				return (after_args(b, mandel, 0, 0, 0));
 		} else if (!ft_strcmp(argv[1], "JULIA"))
 		{
-			if (argc == 6)
-				args_to_bounds(&b, argv, &correct_params);
-			else
-			{
-				b.a = -2;
-				b.b = 2;
-				b.c = -2;
-				b.d = 2;
-			}
+			b.a = 0 - (WIDTH / 320.0);
+			b.b = 0 + (WIDTH / 320.0);
+			b.c = 0 + (HEIGHT / 320.0);
+			b.d = 0 - (HEIGHT / 320.0);
 			if (correct_params)
-				return (after_args(b, julia, 0.1627, 0.5717, 0));
+				return (after_args(b, julia, x0, y0, 0));
 		} else if (!ft_strcmp(argv[1], "NEWTON"))
 		{
-			if (argc == 6)
-				args_to_bounds(&b, argv, &correct_params);
-			else
-			{
-				b.a = -1;
-				b.b = 1;
-				b.c = -1;
-				b.d = 1;
-			}
-			if (correct_params)
+			b.a = 0 - (WIDTH / 320.0);
+			b.b = 0 + (WIDTH / 320.0);
+			b.c = 0 + (HEIGHT / 320.0);
+			b.d = 0 - (HEIGHT / 320.0);
+			if (correct_params && argc == 2)
 				return (after_args(b, newton, 0, 0, 1));
 		}
 	}

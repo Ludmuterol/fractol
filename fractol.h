@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/04 20:04:40 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 21:59:04 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@
 
 # define HEIGHT 500
 # define WIDTH 500
-# define DEPTH_MAX 500
+# define DEPTH_MAX 5000
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
-# define MOVE 11	//PIXEL - nach links; + nach rechts
+# define MOVE 10	//PIXEL - nach links; + nach rechts
 
 typedef struct s_data
 {
@@ -80,7 +80,7 @@ typedef struct s_vars
 	double	xn;
 	double	yn;
 	int		max_depth;
-	int		depths[WIDTH][HEIGHT];
+	int		**depths;
 	int		get_mouse_move;
 	int		is_newton;
 	int		show_rects;
@@ -152,10 +152,15 @@ void	put_pixels(t_vars *vars, int x, int y, int i);
 
 /* FRACTOL_DEPTH_ARRAY.C */
 void	move_array(t_vars *vars, int hor, int ver);
-void	init_depth_array(int in[WIDTH][HEIGHT]);
+void	init_depth_array(int **in);
+int 	**alloc_depth(void);
+void	free_depth(int **in);
 
 /* FRACTOL_RECT_OPTIMIZATION.C */
 int		fill_rec_bord(struct s_rect_args *s);
 void	rec_box(struct s_rect_args *s);
+
+/* FRACTOL.C */
+int		quit(t_vars *vars);
 
 #endif
