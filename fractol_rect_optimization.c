@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/31 22:39:26 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/06 21:23:32 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 22:13:35 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	rec_box(struct s_rect_args *s)
 			if (s->stuff->f == newton)
 				fill_rec(s, 0);
 			else
-				fill_rec(s, 2);
+				fill_rec(s, -2);
 		}
 		else
 			fill_rec(s, tmp);

@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:01:47 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/06 21:51:15 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/06 22:14:35 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	put_pixels(t_vars *vars, int x, int y, int i)
 		else
 		{
 			put_pixel(&vars->img, x, y,
-				new_color(0, 0, 0, vars->img.endi));
+				new_color(255, 255, 255, vars->img.endi));
 		}
 	}
 	else
@@ -40,7 +40,7 @@ static void	bf_pixl(struct s_for_each_pixel *s, int *dep, double xt, double yt)
 {
 	struct s_fract_arguments	fs;
 
-	if (*dep < 0)
+	if (*dep == -1)
 	{
 		fs.depth_max = s->vars->max_depth;
 		fs.x = xt;
