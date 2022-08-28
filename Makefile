@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/05/10 10:31:31 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/06 20:36:00 by tpeters          ###   ########.fr        #
+#    Created: 2022/08/28 17:42:17 by tpeters           #+#    #+#              #
+#    Updated: 2022/08/28 18:39:40 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,41 +15,59 @@ OBJS = $(SRCS:.c=.o)
 NAME = fractol
 
 CFLAGS = -Wall -Wextra -Werror
+LINK_FLAGS = -Llibft -lft
 CC = cc
-
 
 ifeq ($(OS),Windows_NT)
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-        CFLAGS += -I/usr/include
-		LINK_FLAGS = -Llibft -lft -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz -O3
+		CFLAGS += -I/usr/include
+		LINK_FLAGS += -Lmlx_linux -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz -O3
     endif
     ifeq ($(UNAME_S),Darwin)
-        CFLAGS += -Imlx
-		LINK_FLAGS = -Llibft -lft -Lmlx -lmlx -framework OpenGL -framework AppKit
+	    CFLAGS += -Imlx
+		LINK_FLAGS += -Lmlx -lmlx -framework OpenGL -framework AppKit
     endif
 endif
 
+LIBFTLIB=/libft/libft.a
+LIBMLXLIB=/mlx/libmlx.a
+all: $(LIBFTLIB) $(LIBMLXLIB)
 all: $(NAME)
 
-lsan: CFLAGS += -ILeakSanitizer-main -Wno-gnu-include-next
-lsan: LINK_FLAGS += -LLeakSanitizer-main -llsan -lc++
-lsan: fclean
+debug: CFLAGS += -g
+debug: all
+
+LSANLIB = /LeakSanitizer/liblsan.a
+lsan: CFLAGS += -ILeakSanitizer -Wno-gnu-include-next
+lsan: LINK_FLAGS += -LLeakSanitizer -llsan -lc++
+lsan: fclean $(LSANLIB)
 lsan: all
 
-debug :
-	$(CC) $(CFLAGS) -g -c $(SRCS)
-	$(CC) $(OBJS) -g $(LINK_FLAGS) -o $(NAME)
+$(LSANLIB): 
+	if [ ! -d "LeakSanitizer" ]; then git clone git@github.com:mhahnFr/LeakSanitizer.git; fi
+	$(MAKE) -C LeakSanitizer
+
+$(LIBFTLIB):
+	if [ ! -d "libft" ]; then git clone git@github.com:Ludmuterol/libft.git; fi
+	$(MAKE) -C libft
+
+$(LIBMLXLIB):
+	$(MAKE) -C mlx
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LINK_FLAGS) -o $(NAME)
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) -c $(SRCS)
+clean:
+	rm -f $(OBJS)
 
-fclean: 
-	rm -f $(NAME) $(OBJS)
+fclean: clean
+	$(MAKE) -C libft fclean
+	$(MAKE) -C mlx clean
+	rm -f $(NAME)
 
 re: fclean
 	$(MAKE)
+
+.PHONY: lsan debug all clean fclean re

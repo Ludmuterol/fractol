@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/06 21:59:04 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/08/28 18:39:06 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@
 
 # define HEIGHT 500
 # define WIDTH 500
-# define DEPTH_MAX 5000
+# define DEPTH_MAX 500
 
 # define ZOOM 0.5	// 0.0 < ZOOM < 1.0
 # define MOVE 10	//PIXEL - nach links; + nach rechts
