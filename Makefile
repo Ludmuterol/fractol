@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/28 17:42:17 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/28 18:39:40 by tpeters          ###   ########.fr        #
+#    Updated: 2022/08/30 17:26:01 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,15 +46,15 @@ lsan: fclean $(LSANLIB)
 lsan: all
 
 $(LSANLIB): 
-	if [ ! -d "LeakSanitizer" ]; then git clone git@github.com:mhahnFr/LeakSanitizer.git; fi
+	@if [ ! -d "LeakSanitizer" ]; then git clone git@github.com:mhahnFr/LeakSanitizer.git; fi
 	$(MAKE) -C LeakSanitizer
 
 $(LIBFTLIB):
-	if [ ! -d "libft" ]; then git clone git@github.com:Ludmuterol/libft.git; fi
+	@if [ ! -d "libft" ]; then git clone git@github.com:Ludmuterol/libft.git; fi
 	$(MAKE) -C libft
 
 $(LIBMLXLIB):
-	$(MAKE) -C mlx
+	$(MAKE) -C mlx CFLAGS=-Wno-deprecated
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LINK_FLAGS) -o $(NAME)
