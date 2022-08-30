@@ -6,7 +6,7 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/28 17:42:17 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/30 17:26:01 by tpeters          ###   ########.fr        #
+#    Updated: 2022/08/30 17:29:40 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,7 @@ $(LIBFTLIB):
 	$(MAKE) -C libft
 
 $(LIBMLXLIB):
-	$(MAKE) -C mlx CFLAGS=-Wno-deprecated
+	$(MAKE) -C mlx CFLAGS+="-Wno-deprecated -DSTRINGPUTX11 -O2"
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LINK_FLAGS) -o $(NAME)
