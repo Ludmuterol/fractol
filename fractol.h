@@ -6,29 +6,27 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/11/06 20:51:44 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/11/06 22:32:53 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
-# ifdef _WIN32
-# endif
 # ifdef __APPLE__
 #  include "mlx/mlx.h"
-#  define XK_Escape                      53
-#  define XK_Left                        123
-#  define XK_Up                          126
-#  define XK_Right                       124
-#  define XK_Down                        125
-#  define XK_p                           35
-#  define XK_k							40
-#  define XK_l							37
-#  define XK_r							15
-#  define XK_m							46
-#  define XK_j							38
-#  define XK_n							45
+#  define XK_ESCAPE                      53
+#  define XK_LEFT                        123
+#  define XK_UP                          126
+#  define XK_RIGHT                       124
+#  define XK_DOWN                        125
+#  define XK_P                           35
+#  define XK_K							40
+#  define XK_L							37
+#  define XK_R							15
+#  define XK_M							46
+#  define XK_J							38
+#  define XK_N							45
 #  define LCLICK 1
 #  define MCLICK 3
 #  define RCLICK 2
@@ -37,6 +35,7 @@
 # endif
 # ifdef unix
 #  include "mlx_linux/mlx.h"
+//get keycodes from keysym.h and copy them. (norminette)
 #  include <X11/keysym.h>
 #  define LCLICK 1
 #  define MCLICK 2
@@ -51,10 +50,13 @@
 
 # define HEIGHT 500
 # define WIDTH 500
-# define DEPTH_MAX 500
+# define DEPTH_MAX 50
 
-# define ZOOM 0.5	// 0.0 < ZOOM < 1.0
-# define MOVE 10	//PIXEL - nach links; + nach rechts
+// 0.0 < ZOOM < 1.0
+# define ZOOM 0.5
+
+//PIXEL - nach links; + nach rechts
+# define MOVE 10
 
 typedef struct s_data
 {
@@ -159,7 +161,22 @@ void	free_depth(int **in);
 int		fill_rec_bord(struct s_rect_args *s);
 void	rec_box(struct s_rect_args *s);
 
-/* FRACTOL.C */
+/* FRACTOL_KEY.C */
+int		key_press(int kc, struct s_for_each_pixel *s);
+
+/* FRACTOL_MOUSE.C */
+int		mouse_move(int x, int y, t_vars *vars);
+int		mouse_hook(int button, int x, int y, t_vars *vars);
+
+/* FRACTOL_BOUNDS.C */
+void	set_bounds(t_vars *vars, t_bounds in);
+void	calc_len(t_vars *vars);
+void	inc_max_dep(t_vars *vars);
+void	dec_max_dep(t_vars *vars);
+
+/* FRACTOL_STUFF.C */
+int		init(t_vars *v);
 int		quit(t_vars *vars);
+void	prnt_how_to_use(void);
 
 #endif

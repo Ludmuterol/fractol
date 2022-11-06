@@ -6,11 +6,11 @@
 #    By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/28 17:42:17 by tpeters           #+#    #+#              #
-#    Updated: 2022/08/30 17:29:40 by tpeters          ###   ########.fr        #
+#    Updated: 2022/11/06 22:29:56 by tpeters          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = fractol.c fractol_color_utils.c fractol_pixel_utils.c fractol_mandelbrot.c fractol_depth_array.c fractol_julia.c fractol_newton.c fractol_rect_optimization.c
+SRCS = fractol.c fractol_color_utils.c fractol_pixel_utils.c fractol_mandelbrot.c fractol_depth_array.c fractol_julia.c fractol_newton.c fractol_rect_optimization.c fractol_key.c fractol_mouse.c fractol_bounds.c fractol_stuff.c
 OBJS = $(SRCS:.c=.o)
 NAME = fractol
 
@@ -59,6 +59,9 @@ $(LIBMLXLIB):
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LINK_FLAGS) -o $(NAME)
 
+norm:
+	norminette $(SRCS) fractol.h
+
 clean:
 	rm -f $(OBJS)
 
@@ -70,4 +73,4 @@ fclean: clean
 re: fclean
 	$(MAKE)
 
-.PHONY: lsan debug all clean fclean re
+.PHONY: lsan debug all norm clean fclean re
