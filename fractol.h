@@ -6,13 +6,12 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 14:44:20 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/28 18:39:06 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/11/06 20:51:44 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
 # define FRACTOL_H
-
 
 # ifdef _WIN32
 # endif
@@ -153,7 +152,7 @@ void	put_pixels(t_vars *vars, int x, int y, int i);
 /* FRACTOL_DEPTH_ARRAY.C */
 void	move_array(t_vars *vars, int hor, int ver);
 void	init_depth_array(int **in);
-int 	**alloc_depth(void);
+int		**alloc_depth(void);
 void	free_depth(int **in);
 
 /* FRACTOL_RECT_OPTIMIZATION.C */

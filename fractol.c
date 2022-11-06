@@ -6,7 +6,7 @@
 /*   By: tpeters <tpeters@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 10:31:34 by tpeters           #+#    #+#             */
-/*   Updated: 2022/08/16 16:46:07 by tpeters          ###   ########.fr       */
+/*   Updated: 2022/11/06 20:54:59 by tpeters          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,8 @@ int	mouse_move(int x, int y, t_vars *vars)
 	return (0);
 }
 
-int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn, double yn, int is_newton)
+int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), \
+double xn, double yn, int is_newton)
 {
 	t_vars					vars;
 	struct s_for_each_pixel	stuff;
@@ -215,14 +216,12 @@ int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn,
 	stuff.f = f;
 	vars.xn = xn;
 	vars.yn = yn;
-
 	stuff.vars = &vars;
 	vars.get_mouse_move = 0;
 	vars.max_depth = DEPTH_MAX;
 	vars.is_newton = is_newton;
 	vars.show_rects = 0;
 	mlx_hook(vars.win, 6, 1L << 6, mouse_move, &vars);
-
 	mlx_loop_hook(vars.mlx, for_each_pixel, &stuff);
 	mlx_hook(vars.win, 2, 1L << 0, key_press, &stuff);
 	mlx_hook(vars.win, 17, 0, quit, &vars);
@@ -231,15 +230,14 @@ int	after_args(t_bounds b, int (*f)(struct s_fract_arguments *stuff), double xn,
 	return (0);
 }
 
-#include <stdio.h>
-void	prnt_how_to_use()
+void	prnt_how_to_use(void)
 {
-	printf("fractol MODE\n");
-	printf("Possible Values for MODE:\n");
-	printf("\tMANDELBROT\n");
-	printf("\tJULIA [X0 Y0]\n");
-	printf("\tNEWTON\n");
-	printf("X0, Y0 as floats and only for JULIA\n");
+	ft_printf("fractol MODE\n");
+	ft_printf("Possible Values for MODE:\n");
+	ft_printf("\tMANDELBROT\n");
+	ft_printf("\tJULIA [X0 Y0]\n");
+	ft_printf("\tNEWTON\n");
+	ft_printf("X0, Y0 as floats and only for JULIA\n");
 	exit(0);
 }
 
@@ -258,8 +256,8 @@ int	main(int argc, char *argv[])
 {
 	t_bounds	b;
 	int			correct_params;
-	double			x0;
-	double			y0;
+	double		x0;
+	double		y0;
 
 	correct_params = 1;
 	x0 = -0.752;
@@ -276,7 +274,8 @@ int	main(int argc, char *argv[])
 			b.d = 0 - (HEIGHT / 320.0);
 			if (correct_params && argc == 2)
 				return (after_args(b, mandel, 0, 0, 0));
-		} else if (!ft_strcmp(argv[1], "JULIA"))
+		}
+		else if (!ft_strcmp(argv[1], "JULIA"))
 		{
 			b.a = 0 - (WIDTH / 320.0);
 			b.b = 0 + (WIDTH / 320.0);
@@ -284,7 +283,8 @@ int	main(int argc, char *argv[])
 			b.d = 0 - (HEIGHT / 320.0);
 			if (correct_params)
 				return (after_args(b, julia, x0, y0, 0));
-		} else if (!ft_strcmp(argv[1], "NEWTON"))
+		}
+		else if (!ft_strcmp(argv[1], "NEWTON"))
 		{
 			b.a = 0 - (WIDTH / 320.0);
 			b.b = 0 + (WIDTH / 320.0);
